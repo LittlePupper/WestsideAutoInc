@@ -1,3 +1,20 @@
+<?php
+    // Create connection
+    function connect_sql() {
+        $conn = new mysqli("localhost", "root", "", "WestsideAutoIncDB");
+        
+        // Check connection
+        if ($conn->error) {
+            die("Error: " . $conn->error);
+        }
+        return $conn;
+    }
+?>
+
+<?php 
+    $conn = connect_sql();
+?>
+
 <!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
@@ -45,19 +62,20 @@
                                 <label for="middle-label" class="text-right middle">Buyer</label>
                             </div>
                             <div class="large-5 cell">
-                                <select name="style" >
-                                    <option alue="convertible">Convertible</option>
-                                    <option value="coupe">Coupe</option>
-                                    <option value="crossover">Crossover</option>
-                                    <option value="hatchback">Hatchback</option>
-                                    <option value="mpv">MPV</option>
-                                    <option value="sedan">Sedan</option>
-                                    <option value="suv">SUV</option>
-                                    <option value="station-wagon">Station wagon</option>
-                                    <option value="truck">Truck</option>
-                                    <option value="van">Van</option>
-                                    <option value="other">Other</option>
-                                </select>
+                                <?php 
+                                    $sql = "SELECT BuyerID, FirstName, LastName FROM Buyer ORDER BY LastName";
+                                    $result = mysqli_query($conn, $sql);
+
+                                    echo "<select name='buyer'>";
+                                    while ($row = $result->fetch_assoc()) {
+                                        $BuyerID = $row['BuyerID'];
+                                        $FirstName = $row['FirstName'];
+                                        $LastName = $row['LastName'];
+                                        echo '<option value="'.$BuyerID.'">' .$LastName.', ' .$FirstName. '</option>';
+                                    }
+                                    echo "</select>";
+                                ?>
+                                
                             </div>
                         </div>
                     </fieldset>
