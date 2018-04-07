@@ -54,7 +54,45 @@
                     <div class="title">Purchase a vehicle</div>
                     <div class="description">Use this form when a buyer purchases a vehicle.</div>
                 </div>
-                <form>
+                
+                <?php
+                    if(isset($_POST['purchaseVehicle'])){
+                        
+                        $buyerID = $_POST['buyerID'];
+                        $date = $_POST['date'];
+                        if (isset($_POST['auction']))
+                            $auction = 1;
+                        else
+                            $auction = 0;
+                        $seller = $_POST['seller'];
+                        $location = $_POST['location'];
+
+                        $stmt = $conn->prepare("INSERT INTO Purchase (BuyerID, Date, Auction, Seller, Location) VALUES (?, ?, ?, ?, ?)");
+                        $stmt->bind_param("isiss", $buyerID, $date, $auction, $seller, $location);
+
+                        $stmt->execute();
+
+                        if($stmt->affected_rows === -1) {
+                            echo '<div class="large-12 cell "><div data-closable class="callout alert-callout-border alert">
+                            <strong>Boo!</strong> - It broke!
+                            <button class="close-button" aria-label="Dismiss alert" type="button" data-close>
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                            </div></div>';
+                        } else {
+                            echo '<div class="large-12 cell "><div data-closable class="callout alert-callout-border success">
+                            <strong>Yay!</strong> - You added a new purchase!
+                            <button class="close-button" aria-label="Dismiss alert" type="button" data-close>
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div></div>';
+                            }
+
+                        $stmt->close();
+                    }
+                ?>
+                
+                <form class="data" action="purchase.php" method="post">
                     
                     <fieldset>
                         <div class="grid-x grid-padding-x ">
@@ -66,7 +104,7 @@
                                     $sql = "SELECT BuyerID, FirstName, LastName FROM Buyer ORDER BY LastName";
                                     $result = mysqli_query($conn, $sql);
 
-                                    echo "<select name='buyer'>";
+                                    echo "<select name='buyerID'>";
                                     while ($row = $result->fetch_assoc()) {
                                         $BuyerID = $row['BuyerID'];
                                         $FirstName = $row['FirstName'];
@@ -87,28 +125,28 @@
                             </div>
 
                             <div class="large-1 cell">
-                                <label for="middle-label" class="text-right middle">Date</label>
+                                <label for="date" class="text-right middle">Date</label>
                             </div>
                             <div class="large-5 cell">
-                                <input type="date" name="date" id="middle-label">
+                                <input type="date" name="date">
                             </div>
 
                             <div class="large-1 cell">
-                                <label for="middle-label" class="text-right middle">Auction</label>
+                                <label for="auction" class="text-right middle">Auction</label>
                             </div>
                             <div class="large-5 cell">
-                                <input type="checkbox" name="auction" value="auction">
+                                <input type="checkbox" name="auction">
                             </div>
 
                             <div class="large-1 cell">
-                                <label for="middle-label" class="text-right middle">Seller</label>
+                                <label for="seller" class="text-right middle">Seller</label>
                             </div>
                             <div class="large-5 cell">
                                 <input type="text" name="seller" placeholder="John Doe">
                             </div>
 
                             <div class="large-1 cell">
-                                <label for="middle-label" class="text-right middle">Location</label>
+                                <label for="location" class="text-right middle">Location</label>
                             </div>
                             <div class="large-5 cell">
                                 <input type="text" name="location" placeholder="National Auto Outlet">
@@ -116,6 +154,11 @@
                         </div>
                     </fieldset>
                         
+                    <div class="grid-x grid-padding-x">
+                        <div class="large-12 cell">
+                            <input type="submit" class="button float-right" id="purchaseVehicle" name="purchaseVehicle" value="Purchase vehicle">
+                        </div>
+                    </div>
                     <fieldset id="car">
                         <div class="vehicle-group">
                             <div class="grid-x grid-padding-x">
