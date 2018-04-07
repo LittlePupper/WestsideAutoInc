@@ -138,7 +138,8 @@ CREATE TABLE Repair (
 	RepairID	INT(6) AUTO_INCREMENT,
 	VehicleID	INT(6),
 	Problem		VARCHAR(200) NOT NULL,
-	Estimate	FLOAT(8,2) NOT NULL,
+	EstCost		FLOAT(8,2) NOT NULL,
+	ActualCost	FLOAT(8,2) NOT NULL,
 	PRIMARY KEY (RepairID),
 	FOREIGN KEY (VehicleID) REFERENCES Vehicle(VehicleID)
 );

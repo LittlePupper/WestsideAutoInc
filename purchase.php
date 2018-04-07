@@ -58,6 +58,7 @@
                 <?php
                     if(isset($_POST['purchaseVehicle'])){
                         
+                        /*Purchase*/
                         $buyerID = $_POST['buyerID'];
                         $date = $_POST['date'];
                         if (isset($_POST['auction']))
@@ -66,12 +67,38 @@
                             $auction = 0;
                         $seller = $_POST['seller'];
                         $location = $_POST['location'];
-
-                        $stmt = $conn->prepare("INSERT INTO Purchase (BuyerID, Date, Auction, Seller, Location) VALUES (?, ?, ?, ?, ?)");
-                        $stmt->bind_param("isiss", $buyerID, $date, $auction, $seller, $location);
-
-                        $stmt->execute();
-
+                        
+                        /*Vehicle*/
+                        $make = $_POST['make'];
+                        $model = $_POST['model'];
+                        $year = $_POST['year'];
+                        $style = $_POST['style'];
+                        $color = $_POST['color'];
+                        $interiorColor = $_POST['interiorColor'];
+                        $mileage = $_POST['mileage'];
+                        $condition = $_POST['condition'];
+                        $bookPrice = $_POST['bookPrice'];
+                        $pricePaid = $_POST['pricePaid'];
+                        
+                        /*Repair*/
+                        $estCost = $_POST['estCost'];
+                        $actualCost = $_POST['actualCost'];
+                        $problem = $_POST['problem'];
+                        
+                        /*Insert into Purchase*/
+                        $stmtPurchase = $conn->prepare("INSERT INTO Purchase (BuyerID, Date, Auction, Seller, Location) VALUES (?, ?, ?, ?, ?)");
+                        $stmtPurchase->bind_param("isiss", $buyerID, $date, $auction, $seller, $location);
+                        $stmtPurchase->execute();
+                        
+                        /*Get purchaseID*/
+                        $sql = "SELECT MAX(PurchaseID) FROM Purchase";
+                        $purchaseID = mysqli_query($conn, $sql);
+                        
+                        /*Insert into Vehicle*/
+                        $stmtVehicle = $conn->prepare("INSERT INTO Vehicle (PurchaseID, Make, Model, Year, Style, Color, InteriorColor, Mileage, Condition, BookPrice, PricePaid) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                        $stmtVehicle->bind_param("ississsisdd", $purchaseID, $make, $model, $year, $style, $color, $interior, $mileage, $condition, $bookPrice, $pricePaid);
+                        $stmtVehicle->execute();
+                        
                         if($stmt->affected_rows === -1) {
                             echo '<div class="large-12 cell "><div data-closable class="callout alert-callout-border alert">
                             <strong>Boo!</strong> - It broke!
@@ -154,14 +181,9 @@
                         </div>
                     </fieldset>
                         
-                    <div class="grid-x grid-padding-x">
-                        <div class="large-12 cell">
-                            <input type="submit" class="button float-right" id="purchaseVehicle" name="purchaseVehicle" value="Purchase vehicle">
-                        </div>
-                    </div>
                     <fieldset id="car">
                         <div class="vehicle-group">
-                            <div class="grid-x grid-padding-x">
+                            <div class="grid-x grid-padding-x align-middle">
                                 <div class="large-12 cell">
                                         <hr>
                                     </div>
@@ -213,10 +235,10 @@
                                 </div>
 
                                 <div class="large-1 cell">
-                                    <label for="interior" class="text-right middle">Interior</label>
+                                    <label for="interiorColor" class="text-right middle">Interior color</label>
                                 </div>
                                 <div class="large-5 cell">
-                                    <input type="text" name="interior" placeholder="Tan">
+                                    <input type="text" name="interiorColor" placeholder="Tan">
                                 </div>
 
                                 <div class="large-1 cell">
@@ -297,19 +319,29 @@
                                     </div>
                             </fieldset>
                         
+<!--
                             <div class="grid-x grid-padding-x">
                                 <div class="large-12 cell">
                                     <input type="button" class="button float-right" id="add-problem" name="add-problem" value="Add problem" />
                                 </div>
                             </div>
+-->
                             
                         </div>
                         
                     </fieldset>
+<!--
                     
                     <div class="grid-x grid-padding-x">
                         <div class="large-12 cell">
                             <input type="button" class="button float-right" id="add-vehicle" name="add-vehicle" value="Add vehicle" />
+                        </div>
+                    </div>
+-->
+                        
+                    <div class="grid-x grid-padding-x">
+                        <div class="large-12 cell">
+                            <input type="submit" class="button float-right" id="purchaseVehicle" name="purchaseVehicle" value="Purchase vehicle">
                         </div>
                     </div>
                     
