@@ -1,16 +1,6 @@
 <?php
-//    $servername = "localhost";
-//    $username = "root";
-//    $password = "";
-//    $dbname = "WestsideAutoIncDB";
-
-    $sql = "INSERT INTO Buyer (FirstName, LastName, Phone)
-                   VALUES ('firstName', 'lastName', 'phone')";
-    $conn->query($sql)
-
     // Create connection
     function connect_sql() {
-//        $conn = new mysqli($servername, $username, $password, $dbname);
         $conn = new mysqli("localhost", "root", "", "WestsideAutoIncDB");
         
         // Check connection
@@ -19,15 +9,7 @@
         }
         return $conn;
     }
-
-    function insert_buyer() {
-        if ($conn->query($sql) === TRUE) {
-            echo "New record created successfully";
-        } else {
-            echo "Error: " . $sql . "<br>" . $conn->error;
-        }
-    }
- ?>
+?>
 
 <?php 
     $conn = connect_sql();
@@ -51,9 +33,24 @@
 	<body>
         
         <?php
-            if(isset($_POST['save'])){
-                $sql = "INSERT INTO Buyer (FirstName, LastName, Phone)
-                    VALUES ('".$_POST["username"]."','".$_POST["password"]."','".$_POST["email"]."')";
+            if(isset($_POST['addBuyer'])){
+               
+                $stmt = $conn->prepare("INSERT INTO Buyer (FirstName, LastName, Phone) VALUES (?, ?, ?)");
+                $stmt->bind_param("ssi", $firstName, $lastName, $phone);
+                $firstName = $_POST['firstName'];
+                $lastName = $_POST['lastName'];
+                $phone = $_POST['phone'];
+                
+                $stmt->execute();
+                
+                echo $phone;
+                
+                echo '<div data-closable class="callout alert-callout-border success">
+                    <strong>Yay!</strong> - You added a new buyer!
+                    <button class="close-button" aria-label="Dismiss alert" type="button" data-close>
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>';
                 }
         ?>
         
@@ -114,12 +111,7 @@
                 
                 <!-- SUCCESS ALERT -->
                 
-                <div data-closable class="callout alert-callout-border success">
-                    <strong>Yay!</strong> - You added a new buyer!
-                    <button class="close-button" aria-label="Dismiss alert" type="button" data-close>
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
+                
                 
                 <!-- WARNING ERROR -->
                 
