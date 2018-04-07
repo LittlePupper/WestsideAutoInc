@@ -32,71 +32,83 @@
 	
 	<body>
         
-        <?php
-            if(isset($_POST['addBuyer'])){
-               
-                $stmt = $conn->prepare("INSERT INTO Buyer (FirstName, LastName, Phone) VALUES (?, ?, ?)");
-                $stmt->bind_param("ssi", $firstName, $lastName, $phone);
-                $firstName = $_POST['firstName'];
-                $lastName = $_POST['lastName'];
-                $phone = $_POST['phone'];
-                
-                $stmt->execute();
-                
-                echo $phone;
-                
-                echo '<div data-closable class="callout alert-callout-border success">
-                    <strong>Yay!</strong> - You added a new buyer!
-                    <button class="close-button" aria-label="Dismiss alert" type="button" data-close>
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>';
-                }
-        ?>
-        
         <!-- NAVIGATION -->
         
         <div class="grid-x">
             <div class="cell">
                 <ul class="menu align-right menu-hover-lines">
                     <li><a href="/">Home</a></li>
-                    <li><a href="purchase.html">Purchase</a></li>
-                    <li><a href="sale.html">Sale</a></li>
-                    <li><a href="payment.html">Payment</a></li>
-                    <li class="active"><a href="#">Buyer</a></li>
+                    <li><a href="purchase.php">Purchase</a></li>
+                    <li><a href="sale.php">Sale</a></li>
+                    <li><a href="customer.php">Customer</a></li>
+                    <li class="active"><a href="buyer.php">Buyer</a></li>
                 </ul>
             </div>
         </div>
         
         <div class="form">
             <div class="grid-container">
+                
+                 <?php
+                    if(isset($_POST['addBuyer'])){
+
+                        $firstName = $_POST['firstName'];
+                        $lastName = $_POST['lastName'];
+                        $phone = $_POST['phone'];
+
+                        $stmt = $conn->prepare("INSERT INTO Buyer (FirstName, LastName, Phone) VALUES (?, ?, ?)");
+                        $stmt->bind_param("ssi", $firstName, $lastName, $phone);
+
+                        $stmt->execute();
+
+                        if($stmt->affected_rows === 0) {
+                            echo '<div class="grid-container"><div data-closable class="callout alert-callout-border alert">
+                            <strong>Boo!</strong> - It broke!
+                            <button class="close-button" aria-label="Dismiss alert" type="button" data-close>
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                            </div></div>';
+                            echo "That didn't work";
+                        } else {
+                            echo '<div class="grid-container"><div data-closable class="callout alert-callout-border success">
+                            <strong>Yay!</strong> - You added a new buyer!
+                            <button class="close-button" aria-label="Dismiss alert" type="button" data-close>
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div></div>';
+                            }
+
+                        $stmt->close();
+                    }
+                ?>
+                
                 <div class="large-12 cell">
                     <div class="title">Add a new buyer</div>
                     <div class="description">Use this form to create a new buyer employee.</div>
                 </div>
                 <form action="buyer.php" method="post">
                     
-                    <div class="grid-x grid-padding-x ">    
+                    <div class="grid-x grid-padding-x align-middle">    
 
-                        <div class="large-1 cell">
+                        <div class="small-3 medium-2 large-1 cell">
                             <label for="firstName" class="text-right middle">First name</label>
                         </div>
-                        <div class="large-5 cell">
-                            <input type="text" name="firstName" id="firstName" placeholder="John">
+                        <div class="small-9 medium-4 large-5 cell">
+                            <input type="text" name="firstName" id="firstName" placeholder="John" required>
                         </div>
 
-                        <div class="large-1 cell">
+                        <div class="small-3 medium-2 large-1 cell">
                             <label for="lastName" class="text-right middle">Last name</label>
                         </div>
-                        <div class="large-5 cell">
-                            <input type="text" name="lastName" id="lastName" placeholder="Doe">
+                        <div class="small-9 medium-4 large-5 cell">
+                            <input type="text" name="lastName" id="lastName" placeholder="Doe" required>
                         </div>
 
-                        <div class="large-1 cell">
+                        <div class="small-3 medium-2 large-1 cell">
                             <label for="phone" class="text-right middle">Phone</label>
                         </div>
-                        <div class="large-5 cell">
-                            <input type="tel" name="phone" placeholder="14031234567">
+                        <div class="small-9 medium-4 large-5 cell">
+                            <input type="number" name="phone" placeholder="14031234567" required>
                         </div>
 
                     </div>
@@ -107,23 +119,8 @@
                         </div>
                     </div>
                     
-                </form>
-                
-                <!-- SUCCESS ALERT -->
-                
-                
-                
-                <!-- WARNING ERROR -->
-                
-                <div data-closable class="callout alert-callout-border alert">
-                    <strong>Boo!</strong> - That didn't work!
-                    <button class="close-button" aria-label="Dismiss alert" type="button" data-close>
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                
+                </form>                
             </div>
-            
         </div>
         
         <!-- JQUERY FIRST -->

@@ -1,109 +1,111 @@
+/* Nora White, Matthew Rose, Ryan Lockett */
+
 DROP DATABASE if exists WestsideAutoIncDB;
 CREATE DATABASE WestsideAutoIncDB;
 
 USE WestsideAutoIncDB;
 
 CREATE TABLE Buyer (
-	BuyerID		INT(6),
-	FirstName	VARCHAR(25),
-	LastName	VARCHAR(25),
-	Phone		INT(10),
+	BuyerID		INT(6) AUTO_INCREMENT,
+	FirstName	VARCHAR(25) NOT NULL,
+	LastName	VARCHAR(25) NOT NULL,
+	Phone		BIGINT(11) NOT NULL,
 	PRIMARY KEY (BuyerID)
 );
 
 CREATE TABLE Salesperson (
-	SalespersonID	INT(6),
-	FirstName		VARCHAR(25),
-	LastName		VARCHAR(25),
-	Phone			INT(10),
+	SalespersonID	INT(6) AUTO_INCREMENT,
+	FirstName		VARCHAR(25) NOT NULL,
+	LastName		VARCHAR(25) NOT NULL,
+	Phone			BIGINT(11) NOT NULL,
 	PRIMARY KEY 	(SalespersonID)
 );
 
 CREATE TABLE WarrantyItem (
-	WarrantyItemID	INT(6),
-	Type			VARCHAR(50),
-	Description		VARCHAR(200),
+	WarrantyItemID	INT(6) AUTO_INCREMENT,
+	Type			VARCHAR(50) NOT NULL,
+	Description		VARCHAR(200) NOT NULL,
 	PRIMARY KEY 	(WarrantyItemID)
 );
 
 CREATE TABLE Customer (
-	CustomerID	INT(6),
-	FirstName	VARCHAR(50),
-	LastName	VARCHAR(50),
-	Gender		VARCHAR(20),
-	Birthday	DATE,
-	TaxID		INT(10),
-	Phone		INT(10),
-	Address		VARCHAR(50),
-	City		VARCHAR(20),
-	State		VARCHAR(20),
-	Zip			VARCHAR(6),
+	CustomerID	INT(6) AUTO_INCREMENT,
+	FirstName	VARCHAR(50) NOT NULL,
+	LastName	VARCHAR(50) NOT NULL,
+	Gender		VARCHAR(20) NOT NULL,
+	Birthday	DATE NOT NULL,
+	TaxID		BIGINT(10) NOT NULL,
+	Phone		BIGINT(11) NOT NULL,
+	Address		VARCHAR(50) NOT NULL,
+	City		VARCHAR(20) NOT NULL,
+	State		VARCHAR(20) NOT NULL,
+	Zip			VARCHAR(6) NOT NULL,
 	PRIMARY KEY (CustomerID)
 );
 
 CREATE TABLE Payment (
-	PaymentID		INT(6),
+	PaymentID		INT(6) AUTO_INCREMENT,
 	CustomerID		INT(6),
-	ExpectedDate	DATE,
-	PaidDate		DATE,
-	AmountDue		FLOAT(8,2),
-	AmountPaid		FLOAT(8,2),
-	BankAccount		INT(20),
+	ExpectedDate	DATE NOT NULL,
+	PaidDate		DATE NOT NULL,
+	AmountDue		FLOAT(8,2) NOT NULL,
+	AmountPaid		FLOAT(8,2) NOT NULL,
+	BankAccount		BIGINT(20) NOT NULL,
 	PRIMARY KEY (PaymentID),
 	FOREIGN KEY (CustomerID) REFERENCES Customer(CustomerID)
 );
 
 CREATE TABLE EmploymentHistory (
-	EmploymentHistoryID	INT(6),
+	EmploymentHistoryID	INT(6) AUTO_INCREMENT,
 	CustomerID			INT(6),
-	Employer 			VARCHAR(50),
-	Title				VARCHAR(50),
-	Supervisor			VARCHAR(50),
-	Phone				INT(10),
-	Address				VARCHAR(100),
-	StartDate			DATE,
+	Employer 			VARCHAR(50) NOT NULL,
+	Title				VARCHAR(50) NOT NULL,
+	Supervisor			VARCHAR(50) NOT NULL,
+	Phone				BIGINT(11) NOT NULL,
+	Address				VARCHAR(100) NOT NULL,
+	StartDate			DATE NOT NULL,
 	PRIMARY KEY (EmploymentHistoryID),
 	FOREIGN KEY (CustomerID) REFERENCES Customer(CustomerID)
 );
 
 CREATE TABLE Purchase (
-	PurchaseID	INT(6),
+	PurchaseID	INT(6) AUTO_INCREMENT,
 	BuyerID		INT(6),
-	Date 		DATE,
-	Location	VARCHAR(50),
-	Seller		VARCHAR(50),
-	Auction		BOOLEAN,
+	Date 		DATE NOT NULL,
+	Location	VARCHAR(50) NOT NULL,
+	Seller		VARCHAR(50) NOT NULL,
+	Auction		BOOLEAN NOT NULL,
 	PRIMARY KEY (PurchaseID),
 	FOREIGN KEY (BuyerID) REFERENCES Buyer(BuyerID)
 );
 
 CREATE TABLE Vehicle (
-	VehicleID		INT(6),
+	VehicleID		INT(6) AUTO_INCREMENT,
 	PurchaseID		INT(6),
-	Make			VARCHAR(50),
-	Model			VARCHAR(50),
-	Year			INT(4),
-	Color			VARCHAR(25),
-	Mileage			INT(7),
-	`Condition`		VARCHAR(20),
-	BookPrice		FLOAT(8,2),
-	PricePaid		FLOAT(8,2),
-	Style			VARCHAR(20),
-	InteriorColor	VARCHAR(20),
+	Make			VARCHAR(50) NOT NULL,
+	Model			VARCHAR(50) NOT NULL,
+	Year			INT(4) NOT NULL,
+	Color			VARCHAR(25) NOT NULL,
+	Mileage			INT(7) NOT NULL,
+	`Condition`		VARCHAR(20) NOT NULL,
+	BookPrice		FLOAT(8,2) NOT NULL,
+	PricePaid		FLOAT(8,2) NOT NULL,
+	Style			VARCHAR(20) NOT NULL,
+	InteriorColor	VARCHAR(20) NOT NULL,
 	PRIMARY KEY (VehicleID),
 	FOREIGN KEY (PurchaseID) REFERENCES Purchase(PurchaseID)
 );
 
 CREATE TABLE Sale (
-	SaleID 			INT(6),
+	SaleID 			INT(6) AUTO_INCREMENT,
 	SalespersonID	INT(6),
 	CustomerID		INT(6),
 	VehicleID		INT(6),
-	Date 			DATE,
-	TotalDue		FLOAT(8,2),
-	DownPayment		FLOAT(8,2),
-	FinanceAmount	FLOAT(8,2),
-	Commission		FLOAT(8,2),
+	Date 			DATE NOT NULL,
+	TotalDue		FLOAT(8,2) NOT NULL,
+	DownPayment		FLOAT(8,2) NOT NULL,
+	FinanceAmount	FLOAT(8,2) NOT NULL,
+	Commission		FLOAT(8,2) NOT NULL,
 	PRIMARY KEY (SaleID),
 	FOREIGN KEY (SalespersonID) REFERENCES Salesperson(SalespersonID),
 	FOREIGN KEY (CustomerID) REFERENCES Customer(CustomerID),
@@ -111,32 +113,32 @@ CREATE TABLE Sale (
 );
 
 CREATE TABLE Warranty (
-	WarrantyID 	INT(6),
+	WarrantyID 	INT(6) AUTO_INCREMENT,
 	SaleID 		INT(6),
-	SaleDate	DATE,
-	TotalCost	FLOAT(8,2),
+	SaleDate	DATE NOT NULL,
+	TotalCost	FLOAT(8,2) NOT NULL,
 	PRIMARY KEY (WarrantyID),
 	FOREIGN KEY (SaleID) REFERENCES Sale(SaleID)
 );
 
 CREATE TABLE Coverage (
-	CoverageID		INT(6),
+	CoverageID		INT(6) AUTO_INCREMENT,
 	WarrantyItemID	INT(6),
 	WarrantyID 		INT(6),
-	StartDate		DATE,
-	EndDate			DATE,
-	Cost 			FLOAT(8,2),
-	Deductible		FLOAT(8,2),
+	StartDate		DATE NOT NULL,
+	EndDate			DATE NOT NULL,
+	Cost 			FLOAT(8,2) NOT NULL,
+	Deductible		FLOAT(8,2) NOT NULL,
 	PRIMARY KEY (CoverageID),
 	FOREIGN KEY (WarrantyItemID) REFERENCES WarrantyItem(WarrantyItemID),
 	FOREIGN KEY (WarrantyID) REFERENCES Warranty(WarrantyID)
 );
 
 CREATE TABLE Repair (
-	RepairID	INT(6),
+	RepairID	INT(6) AUTO_INCREMENT,
 	VehicleID	INT(6),
-	Problem		VARCHAR(200),
-	Estimate	FLOAT(8,2),
+	Problem		VARCHAR(200) NOT NULL,
+	Estimate	FLOAT(8,2) NOT NULL,
 	PRIMARY KEY (RepairID),
 	FOREIGN KEY (VehicleID) REFERENCES Vehicle(VehicleID)
 );

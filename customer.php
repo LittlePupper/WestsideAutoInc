@@ -21,9 +21,9 @@
             <div class="cell">
                 <ul class="menu align-right menu-hover-lines">
                     <li><a href="/">Home</a></li>
-                    <li><a href="purchase.html">Purchase</a></li>
-                    <li><a href="sale.html">Sale</a></li>
-                    <li class="active"><a href="#">Customer</a></li>
+                    <li><a href="purchase.php">Purchase</a></li>
+                    <li><a href="sale.php">Sale</a></li>
+                    <li class="active"><a href="customer.php">Customer</a></li>
                     <li><a href="buyer.php">Buyer</a></li>
                 </ul>
             </div>

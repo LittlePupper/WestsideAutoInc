@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
 
 	<head>
-		<title>Westside Auto Inc. | Purchase</title>
+		<title>Westside Auto Inc. | Sale</title>
 		<meta http-equiv="content-type" content="application/xhtml+xml; charset=UTF-8" />
 
 		<!-- CSS -->
@@ -21,9 +21,10 @@
             <div class="cell">
                 <ul class="menu align-right menu-hover-lines">
                     <li><a href="/">Home</a></li>
-                    <li class="active"><a href="#">Purchase</a></li>
-                    <li><a href="sale.html">Sale</a></li>
-                    <li><a href="payment.html">Payment</a></li>
+                    <li><a href="purchase.php">Purchase</a></li>
+                    <li class="active"><a href="sale.php">Sale</a></li>
+                    <li><a href="customer.php">Customer</a></li>
+                    <li><a href="buyer.php">Buyer</a></li>
                 </ul>
             </div>
         </div>
@@ -31,66 +32,73 @@
         <div class="form">
             <div class="grid-container">
                 <div class="large-12 cell">
-                    <div class="title">Purchase a vehicle</div>
-                    <div class="description">Use this form when a buyer purchases a vehicle.</div>
+                    <div class="title">Sell a vehicle</div>
+                    <div class="description">Use this form when selling a vehicle to a customer.</div>
                 </div>
                 <form>
                     
                     <fieldset>
-                        <div class="grid-x grid-padding-x ">
+                        <div class="grid-x grid-padding-x align-middle">
                             <div class="large-1 cell">
-                                <label for="middle-label" class="text-right middle">Buyer</label>
+                                <label for="middle-label" class="text-right middle">Customer search</label>
                             </div>
                             <div class="large-5 cell">
-                                <select name="style" >
-                                    <option alue="convertible">Convertible</option>
-                                    <option value="coupe">Coupe</option>
-                                    <option value="crossover">Crossover</option>
-                                    <option value="hatchback">Hatchback</option>
-                                    <option value="mpv">MPV</option>
-                                    <option value="sedan">Sedan</option>
-                                    <option value="suv">SUV</option>
-                                    <option value="station-wagon">Station wagon</option>
-                                    <option value="truck">Truck</option>
-                                    <option value="van">Van</option>
-                                    <option value="other">Other</option>
-                                </select>
+                                <div class="input-group">
+                                    <input class="input-group-field" type="text" placeholder="John Doe">
+                                    <div class="input-group-button">
+                                        <input type="submit" class="button" value="Search">
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </fieldset>
                     
                     <fieldset>
-                        <div class="grid-x grid-padding-x ">    
+                        <div class="grid-x grid-padding-x align-middle">    
                             <div class="large-12 cell">
                                 <hr>
                             </div>
 
                             <div class="large-1 cell">
-                                <label for="middle-label" class="text-right middle">Date</label>
+                                <label for="name" class="text-right middle">Name</label>
                             </div>
                             <div class="large-5 cell">
-                                <input type="date" name="date" id="middle-label">
+                                <input type="text" name="name" id="name">
                             </div>
 
                             <div class="large-1 cell">
-                                <label for="middle-label" class="text-right middle">Auction</label>
+                                <label for="gender" class="text-right middle">Gender</label>
                             </div>
                             <div class="large-5 cell">
-                                <input type="checkbox" name="auction" value="auction">
+                                <input type="text" name="gender" id="gender">
                             </div>
 
                             <div class="large-1 cell">
-                                <label for="middle-label" class="text-right middle">Seller</label>
+                                <label for="birthday" class="text-right middle">Birthday</label>
                             </div>
                             <div class="large-5 cell">
-                                <input type="text" name="seller" placeholder="John Doe">
+                                <input type="date" name="birthday">
                             </div>
 
                             <div class="large-1 cell">
-                                <label for="middle-label" class="text-right middle">Location</label>
+                                <label for="taxID" class="text-right middle">Tax ID</label>
                             </div>
                             <div class="large-5 cell">
-                                <input type="text" name="location" placeholder="National Auto Outlet">
+                                <input type="number" name="taxID" placeholder="11111111">
+                            </div>
+                            
+                            <div class="large-1 cell">
+                                <label for="noLatePayments" class="text-right middle">No. late payments</label>
+                            </div>
+                            <div class="large-5 cell">
+                                <input type="number" name="noLatePayments" disabled>
+                            </div>
+                            
+                            <div class="large-1 cell">
+                                <label for="avgNoDaysLate" class="text-right middle">Avg no. days late</label>
+                            </div>
+                            <div class="large-5 cell">
+                                <input type="number" name="avgNoDaysLate" disabled>
                             </div>
                         </div>
                     </fieldset>
@@ -198,39 +206,40 @@
                                     <div class="large-12 cell">
                                         <hr>
                                     </div>                
-                                    <div class="large-1 cell">
-                                        <label for="problemNo" class="text-right middle">Problem #</label>
-                                    </div>
-                                    <div class="large-1 cell">
-                                        <input type="number" name="problemNo" placeholder="1">
-                                    </div>
-
-                                    <div class="large-3 cell">
-                                        <label for="estCost" class="text-right middle">Est. cost</label>
-                                    </div>
-                                    <div class="large-2 cell">
-                                        <div class="input-group">
-                                            <span class="input-group-label">$</span>
-                                            <input class="input-group-field" name="estCost" type="number" placeholder="400.00">
+                                        <div class="large-1 cell">
+                                            <label for="problemNo" class="text-right middle">Problem #</label>
                                         </div>
-                                    </div>
-
-                                    <div class="large-3 cell">
-                                        <label for="actualCost" class="text-right middle">Actual cost</label>
-                                    </div>
-                                    <div class="large-2 cell">
-                                        <div class="input-group">
-                                            <span class="input-group-label">$</span>
-                                            <input class="input-group-field" name="actualCost" type="number" placeholder="300.00">
+                                        <div class="large-1 cell">
+                                            <input type="number" name="problemNo" placeholder="1">
                                         </div>
-                                    </div>
 
-                                    <div class="large-1 cell">
-                                        <label for="problem" class="text-right middle">Problem</label>
-                                    </div>                        
-                                    <div class="large-11 cell">
-                                        <textarea name="problem" placeholder="The problem is..."></textarea>
-                                    </div>
+                                        <div class="large-3 cell">
+                                            <label for="estCost" class="text-right middle">Est. cost</label>
+                                        </div>
+                                        <div class="large-2 cell">
+                                            <div class="input-group">
+                                                <span class="input-group-label">$</span>
+                                                <input class="input-group-field" name="estCost" type="number" placeholder="400.00">
+                                            </div>
+                                        </div>
+
+                                        <div class="large-3 cell">
+                                            <label for="actualCost" class="text-right middle">Actual cost</label>
+                                        </div>
+                                        <div class="large-2 cell">
+                                            <div class="input-group">
+                                                <span class="input-group-label">$</span>
+                                                <input class="input-group-field" name="actualCost" type="number" placeholder="300.00">
+                                            </div>
+                                        </div>
+
+                                        <div class="large-1 cell">
+                                            <label for="problem" class="text-right middle">Problem</label>
+                                        </div>                        
+                                        <div class="large-11 cell">
+                                            <textarea name="problem" placeholder="The problem is..."></textarea>
+                                        </div>
+                                </div>
                             </fieldset>
                         
                             <div class="grid-x grid-padding-x">
@@ -267,7 +276,7 @@
                     $rowProblem.clone().insertBefore( $buttonProblem );
                 });
                 $buttonVehicle.click(function() {
-                   $rowVehicle.clone(true).off().insertBefore( $buttonVehicle); 
+                   $rowVehicle.clone().insertBefore( $buttonVehicle); 
                 });
             });
         </script>
