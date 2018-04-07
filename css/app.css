@@ -9,6 +9,10 @@ form label {
     font-size: .85em !important;
 }
 
+textarea {
+    min-height: 8em !important;
+}
+
 .menu {
     position: absolute !important;
     z-index: 10;
@@ -100,8 +104,15 @@ form label {
   width: 100%;
 }
 
+/*
 .callout {
     margin-top: -74px !important;
+}
+*/
+
+.alert-callout-bottom{
+    position: fixed;
+    bottom: 20px;
 }
 
 .alert-callout-border {

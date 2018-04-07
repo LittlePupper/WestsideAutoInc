@@ -25,6 +25,8 @@
                     <li><a href="sale.php">Sale</a></li>
                     <li><a href="customer.php">Customer</a></li>
                     <li><a href="buyer.php">Buyer</a></li>
+                    <li><a href="salesperson.php">Salesperson</a></li>
+                    <li><a href="warrantyitem.php">Warranty Item</a></li>
                 </ul>
             </div>
         </div>
