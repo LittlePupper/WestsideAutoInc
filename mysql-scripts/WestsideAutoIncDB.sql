@@ -50,7 +50,7 @@ CREATE TABLE Payment (
 	AmountPaid		FLOAT(8,2),
 	BankAccount		INT(20),
 	PRIMARY KEY (PaymentID),
-	FOREIGN KEY (CustomerID) REFERENCES (Customer.CustomerID)
+	FOREIGN KEY (CustomerID) REFERENCES Customer(CustomerID)
 );
 
 CREATE TABLE EmploymentHistory (
@@ -63,7 +63,7 @@ CREATE TABLE EmploymentHistory (
 	Address				VARCHAR(100),
 	StartDate			DATE,
 	PRIMARY KEY (EmploymentHistoryID),
-	FOREIGN KEY (CustomerID) REFERENCES (Customer.CustomerID)
+	FOREIGN KEY (CustomerID) REFERENCES Customer(CustomerID)
 );
 
 CREATE TABLE Purchase (
@@ -74,7 +74,7 @@ CREATE TABLE Purchase (
 	Seller		VARCHAR(50),
 	Auction		BOOLEAN,
 	PRIMARY KEY (PurchaseID),
-	FOREIGN KEY (BuyerID) REFERENCES (Buyer.BuyerID)
+	FOREIGN KEY (BuyerID) REFERENCES Buyer(BuyerID)
 );
 
 CREATE TABLE Vehicle (
@@ -85,13 +85,13 @@ CREATE TABLE Vehicle (
 	Year			INT(4),
 	Color			VARCHAR(25),
 	Mileage			INT(7),
-	Condition		VARCHAR(20),
+	`Condition`		VARCHAR(20),
 	BookPrice		FLOAT(8,2),
 	PricePaid		FLOAT(8,2),
 	Style			VARCHAR(20),
 	InteriorColor	VARCHAR(20),
 	PRIMARY KEY (VehicleID),
-	FOREIGN KEY (PurchaseID) REFERENCES (Purchase.PurchaseID)
+	FOREIGN KEY (PurchaseID) REFERENCES Purchase(PurchaseID)
 );
 
 CREATE TABLE Sale (
@@ -105,9 +105,9 @@ CREATE TABLE Sale (
 	FinanceAmount	FLOAT(8,2),
 	Commission		FLOAT(8,2),
 	PRIMARY KEY (SaleID),
-	FOREIGN KEY (SalespersonID) REFERENCES (Salesperson.SalespersonID),
-	FOREIGN KEY (CustomerID) REFERENCES (Customer.CustomerID),
-	FOREIGN KEY (VehicleID) REFERENCES (Vehicle.VehicleID)
+	FOREIGN KEY (SalespersonID) REFERENCES Salesperson(SalespersonID),
+	FOREIGN KEY (CustomerID) REFERENCES Customer(CustomerID),
+	FOREIGN KEY (VehicleID) REFERENCES Vehicle(VehicleID)
 );
 
 CREATE TABLE Warranty (
@@ -116,7 +116,7 @@ CREATE TABLE Warranty (
 	SaleDate	DATE,
 	TotalCost	FLOAT(8,2),
 	PRIMARY KEY (WarrantyID),
-	FOREIGN KEY (SaleID) REFERENCES (Sale.SaleID)
+	FOREIGN KEY (SaleID) REFERENCES Sale(SaleID)
 );
 
 CREATE TABLE Coverage (
@@ -126,10 +126,10 @@ CREATE TABLE Coverage (
 	StartDate		DATE,
 	EndDate			DATE,
 	Cost 			FLOAT(8,2),
-	Deductible		FLOAT(8,2)
+	Deductible		FLOAT(8,2),
 	PRIMARY KEY (CoverageID),
-	FOREIGN KEY (WarrantyItemID) REFERENCES (WarrantyItem.WarrantyItemID),
-	FOREIGN KEY (WarrantyID) REFERENCES (Warranty.WarrantyID)
+	FOREIGN KEY (WarrantyItemID) REFERENCES WarrantyItem(WarrantyItemID),
+	FOREIGN KEY (WarrantyID) REFERENCES Warranty(WarrantyID)
 );
 
 CREATE TABLE Repair (
@@ -138,5 +138,5 @@ CREATE TABLE Repair (
 	Problem		VARCHAR(200),
 	Estimate	FLOAT(8,2),
 	PRIMARY KEY (RepairID),
-	FOREIGN KEY (VehicleID) REFERENCES (Vehicle.VehicleID)
+	FOREIGN KEY (VehicleID) REFERENCES Vehicle(VehicleID)
 );
