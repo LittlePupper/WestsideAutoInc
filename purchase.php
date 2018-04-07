@@ -91,15 +91,21 @@
                         $stmtPurchase->execute();
                         
                         /*Get purchaseID*/
-                        $sql = "SELECT MAX(PurchaseID) FROM Purchase";
-                        $purchaseID = mysqli_query($conn, $sql);
+                        $sql = "SELECT MAX(PurchaseID) AS PurchaseID FROM Purchase";
+                        $result = mysqli_fetch_assoc(mysqli_query($conn, $sql));
+                        $purchaseID = $result['PurchaseID'];
                         
                         /*Insert into Vehicle*/
-                        $stmtVehicle = $conn->prepare("INSERT INTO Vehicle (PurchaseID, Make, Model, Year, Style, Color, InteriorColor, Mileage, Condition, BookPrice, PricePaid) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-                        $stmtVehicle->bind_param("ississsisdd", $purchaseID, $make, $model, $year, $style, $color, $interior, $mileage, $condition, $bookPrice, $pricePaid);
+                        $stmtVehicle = $conn->prepare("INSERT INTO Vehicle (PurchaseID, Make, Model, Year, Color, Mileage, `Condition`, BookPrice, PricePaid, Style, InteriorColor) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                        $stmtVehicle->bind_param("issisisddss", $purchaseID, $make, $model, $year, $color, $mileage, $condition, $bookPrice, $pricePaid, $style, $interiorColor);
                         $stmtVehicle->execute();
                         
-                        if($stmt->affected_rows === -1) {
+                        /*Insert into Repair*/
+                        $stmtRepair = $conn->prepare("INSERT INTO Repair (VehicleID, EstCost, ActualCost, Problem) VALUES (?, ?, ?, ?)");
+                        $stmtRepair->bind_param("idds", $vehicleID, $estCost, $actualCost, $problem);
+                        $stmtRepair->execute();
+                        
+                        if($stmtVehicle->affected_rows === -1) || $stmtPurchase->affected_rows === -1 || $stmtRepair->affected_rows === -1) {
                             echo '<div class="large-12 cell "><div data-closable class="callout alert-callout-border alert">
                             <strong>Boo!</strong> - It broke!
                             <button class="close-button" aria-label="Dismiss alert" type="button" data-close>
@@ -114,8 +120,9 @@
                             </button>
                         </div></div>';
                             }
-
-                        $stmt->close();
+                        $stmtPurchase->close();
+                        $stmtVehicle->close();
+                        $stmtRepair->close();
                     }
                 ?>
                 
@@ -140,7 +147,6 @@
                                     }
                                     echo "</select>";
                                 ?>
-                                
                             </div>
                         </div>
                     </fieldset>
@@ -213,17 +219,17 @@
                                 </div>
                                 <div class="large-5 cell">
                                     <select name="style">
-                                        <option value="convertible">Convertible</option>
-                                        <option value="coupe">Coupe</option>
-                                        <option value="crossover">Crossover</option>
-                                        <option value="hatchback">Hatchback</option>
-                                        <option value="mpv">MPV</option>
-                                        <option value="sedan">Sedan</option>
-                                        <option value="suv">SUV</option>
-                                        <option value="station-wagon">Station wagon</option>
-                                        <option value="truck">Truck</option>
-                                        <option value="van">Van</option>
-                                        <option value="other">Other</option>
+                                        <option value="Convertible">Convertible</option>
+                                        <option value="Coupe">Coupe</option>
+                                        <option value="Crossover">Crossover</option>
+                                        <option value="Hatchback">Hatchback</option>
+                                        <option value="MPV">MPV</option>
+                                        <option value="Sedan">Sedan</option>
+                                        <option value="SUV">SUV</option>
+                                        <option value="Station-Wagon">Station wagon</option>
+                                        <option value="Truck">Truck</option>
+                                        <option value="Van">Van</option>
+                                        <option value="Other">Other</option>
                                     </select>
                                 </div>  
 
@@ -279,6 +285,7 @@
                                 </div>
                             </div>  
 
+<!--
                             <fieldset id="problem">
                                 <div class="grid-x grid-padding-x problem-group"> 
                                     <div class="large-12 cell">
@@ -318,6 +325,7 @@
                                         <textarea name="problem" placeholder="The problem is..."></textarea>
                                     </div>
                             </fieldset>
+-->
                         
 <!--
                             <div class="grid-x grid-padding-x">
