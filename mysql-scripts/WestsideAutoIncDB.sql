@@ -74,7 +74,7 @@ CREATE TABLE Purchase (
 	Date 		DATE NOT NULL,
 	Location	VARCHAR(50) NOT NULL,
 	Seller		VARCHAR(50) NOT NULL,
-	Auction		BOOLEAN NOT NULL,
+	IsAuction		BOOLEAN NOT NULL,
 	PRIMARY KEY (PurchaseID),
 	FOREIGN KEY (BuyerID) REFERENCES Buyer(BuyerID)
 );
@@ -114,26 +114,17 @@ CREATE TABLE Sale (
 	FOREIGN KEY (VehicleID) REFERENCES Vehicle(VehicleID)
 );
 
-CREATE TABLE Warranty (
-	WarrantyID 	INT(6) AUTO_INCREMENT,
-	SaleID 		INT(6),
-	SaleDate	DATE NOT NULL,
-	TotalCost	FLOAT(8,2) NOT NULL,
-	PRIMARY KEY (WarrantyID),
-	FOREIGN KEY (SaleID) REFERENCES Sale(SaleID)
-);
-
 CREATE TABLE Coverage (
 	CoverageID		INT(6) AUTO_INCREMENT,
 	WarrantyItemID	INT(6) NOT NULL,
-	WarrantyID 		INT(6),
+	SaleID 		INT(6),
 	StartDate		DATE NOT NULL,
 	EndDate			DATE NOT NULL,
 	Cost 			FLOAT(8,2) NOT NULL,
 	Deductible		FLOAT(8,2) NOT NULL,
 	PRIMARY KEY (CoverageID),
 	FOREIGN KEY (WarrantyItemID) REFERENCES WarrantyItem(WarrantyItemID),
-	FOREIGN KEY (WarrantyID) REFERENCES Warranty(WarrantyID)
+	FOREIGN KEY (SaleID) REFERENCES Sale(SaleID)
 );
 
 CREATE TABLE Repair (

@@ -2,7 +2,7 @@
     $q = intval($_GET['q']);
     $conn = new mysqli("localhost", "root", "", "WestsideAutoIncDB");
 
-    $vehiclesql="SELECT * FROM Vehicle WHERE VehicleID = '".$q."'";
+    $vehiclesql="SELECT * FROM Vehicle NATURAL JOIN Purchase NATURAL JOIN Buyer WHERE VehicleID = '".$q."'";
     $result = mysqli_query($conn, $vehiclesql);    
 
     /* CUSTOMER INPUTS BASED ON THE SELECTION FROM THE CUSTOMER TABLE */
@@ -33,7 +33,7 @@
                            placeholder='2008'
                            oninput='javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);'
                            maxlength='4'
-                           value=" . $row['Year'] . "
+                           value='" . $row['Year'] . "'
                            required>
                 </div>
 
@@ -46,7 +46,7 @@
                            id='make' 
                            maxlength='50'
                            placeholder='Volkswagen'
-                           value=" . $row['Make'] . "
+                           value='" . $row['Make'] . "'
                            required>
                 </div>
 
@@ -59,7 +59,7 @@
                            id='model' 
                            maxlength='50'
                            placeholder='Golf'
-                           value=" . $row['Model'] . "
+                           value='" . $row['Model'] . "'
                            required>
                 </div>
 
@@ -74,7 +74,7 @@
                                placeholder='15000'
                                oninput='javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);'
                                maxlength='7'
-                               value=" . $row['Mileage'] . "
+                               value='" . $row['Mileage'] . "'
                                required>
                         <span class='input-group-label'>km</span>
                     </div>
@@ -88,7 +88,7 @@
                            name='color'
                            placeholder='Red' 
                            maxlength='25'
-                           value=" . $row['Color'] . "
+                           value='" . $row['Color'] . "'
                            required>
                 </div>
 
@@ -100,7 +100,7 @@
                            name='interiorColor'
                            placeholder='Tan' 
                            maxlength='25'
-                           value=" . $row['InteriorColor'] . "
+                           value='" . $row['InteriorColor'] . "'
                            required>
                 </div>
 
@@ -131,7 +131,7 @@
                            name='condition'
                            placeholder='Mint' 
                            maxlength='20'
-                           value=" . $row['Condition'] . "
+                           value='" . $row['Condition'] . "'
                            required>
                 </div>
                 
@@ -147,7 +147,7 @@
                                oninput='javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);'
                                maxlength='9'
                                placeholder='3549.00' 
-                               value=" . $row['BookPrice'] . "
+                               value='" . $row['BookPrice'] . "'
                                required>
                     </div>
                 </div>
@@ -164,7 +164,7 @@
                                oninput='javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);'
                                maxlength='9'
                                placeholder='2950.00'
-                               value=" . $row['PricePaid'] . "
+                               value='" . $row['PricePaid'] . "'
                                required>
                     </div>
                 </div>
@@ -181,13 +181,64 @@
                                oninput='javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);'
                                maxlength='9'
                                placeholder='5650.00'
-                               value=" . $row['ListingPrice'] . "
+                               value='" . $row['ListingPrice'] . "'
                                required>
                     </div>
                 </div>
                 
             </div>
-        </form>";
+        </form>
+        
+        <div class='grid-x grid-padding-x align-middle'>    
+            <div class='large-12 cell'>
+                <hr>
+            </div>
+
+            <div class='large-12 cell'>
+                <h5>Purchase info<h5>
+            </div>
+            
+            <div class='large-1 cell'>
+                <label for='buyer' class='text-right middle'>Purchased by</label>
+            </div>
+            
+            <div class='large-5 cell'>
+                <input type='text' name='buyer' value='" . $row['LastName'] . ", " . $row['FirstName'] . "' disabled>
+            </div>
+
+            <div class='large-1 cell'>
+                <label for='date' class='text-right middle'>Date</label>
+            </div>
+            <div class='large-2 cell'>
+                <input type='date' name='date' value='" . $row['Date'] . "' disabled>
+            </div>
+
+            <div class='large-1 cell'>
+                <label for='auction' class='text-right middle'>Auction</label>
+            </div>
+            <div class='large-2 cell'>";
+            
+            if ($row['IsAuction'] == 1)
+                echo "<input type='checkbox' name='auction' checked disabled>";
+            else
+                echo "<input type='checkbox' name='auction' disabled>";
+        
+            echo "</div>
+
+            <div class='large-1 cell'>
+                <label for='seller' class='text-right middle'>Seller</label>
+            </div>
+            <div class='large-5 cell'>
+                <input type='text' name='seller' placeholder='John Doe' value='" . $row['Seller'] . "'disabled>
+            </div>
+
+            <div class='large-1 cell'>
+                <label for='location' class='text-right middle'>Location</label>
+            </div>
+            <div class='large-5 cell'>
+                <input type='text' name='location' placeholder='National Auto Outlet' value='" . $row['Location'] . "'disabled>
+            </div>
+        </div>";
     }
 
     $repairsql="SELECT * FROM Repair WHERE VehicleID = '".$q."'";
@@ -260,6 +311,4 @@
     }
 
     mysqli_close($conn);
-?>
-
-                        
+?>               
