@@ -277,9 +277,9 @@
                                             $InteriorColor = $row['InteriorColor'];
                                             $ListingPrice = $row['ListingPrice'];
                                             echo '<tr>';
+                                            echo '<td>'.$Year.'</td>';
                                             echo '<td>'.$Make.'</td>';
                                             echo '<td>'.$Model.'</td>';
-                                            echo '<td>'.$Year.'</td>';
                                             echo '<td>'.$Color.'</td>';
                                             echo '<td>'.$Mileage.'</td>';
                                             echo '<td>'.$Style.'</td>';

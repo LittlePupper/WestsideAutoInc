@@ -8,7 +8,6 @@
     /* CUSTOMER INPUTS BASED ON THE SELECTION FROM THE CUSTOMER TABLE */
 
     while($row = mysqli_fetch_array($result)) {
-        echo '';
         echo "<form class='data' action='customer.php' method='post'>
             <div class='grid-x grid-padding-x align-middle'>    
                 <div class='large-12 cell'>
@@ -33,7 +32,7 @@
                            id='firstName' 
                            maxlength='50'
                            placeholder='John'
-                           value=" . $row['FirstName'] . "
+                           value='" . $row['FirstName'] . "'
                            required>
                 </div>
 
@@ -46,7 +45,7 @@
                            id='lastName' 
                            maxlength='50'
                            placeholder='Doe'
-                           value=" . $row['LastName'] . "
+                           value='" . $row['LastName'] . "'
                            required>
                 </div>
 
@@ -59,7 +58,7 @@
                            id='gender' 
                            maxlength='20'
                            placeholder='Male'
-                           value=" . $row['Gender'] . "
+                           value='" . $row['Gender'] . "'
                            required>
                 </div>
 
@@ -70,7 +69,7 @@
                     <input type='date' 
                            max='2999-12-31' 
                            name='birthday' 
-                           value=" . $row['Birthday'] . "
+                           value='" . $row['Birthday'] . "'
                            required>
                 </div>
 
@@ -83,7 +82,7 @@
                            placeholder='1234567890' 
                            oninput='javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);'
                            maxlength='10'
-                           value=" . $row['TaxID'] . "
+                           value='" . $row['TaxID'] . "'
                            required>
                 </div>
 
@@ -97,7 +96,7 @@
                            placeholder='14031234567'
                            oninput='javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);'
                            maxlength='11'
-                           value=" . $row['Phone'] . "
+                           value='" . $row['Phone'] . "'
                            required>
                 </div>
 
@@ -110,7 +109,7 @@
                            id='address' 
                            maxlength='50'
                            placeholder='123 Center Street SE'
-                           value=" . $row['Address'] . "
+                           value='" . $row['Address'] . "'
                            required>
                 </div>
 
@@ -123,7 +122,7 @@
                            id='city' 
                            maxlength='20'
                            placeholder='Calgary'
-                           value=" . $row['City'] . "
+                           value='" . $row['City'] . "'
                            required>
                 </div>
 
@@ -136,7 +135,7 @@
                            id='state' 
                            maxlength='20'
                            placeholder='Alberta'
-                           value=" . $row['State'] . "
+                           value='" . $row['State'] . "'
                            required>
                 </div>
 
@@ -149,7 +148,7 @@
                            id='zip' 
                            maxlength='6'
                            placeholder='T1K4G3'
-                           value=" . $row['Zip'] . "
+                           value='" . $row['Zip'] . "'
                            required>
                 </div>
             </div>
@@ -157,6 +156,61 @@
     }
     mysqli_close($conn);
 ?>
+
+<!--VEHICLE TABLE-->
+                
+<div class="grid-x grid-padding-x align-middle">
+    <div class="large-12 cell">
+        <hr>
+    </div>
+    <div class="large-12 cell">
+        <h5>Vehicles purchased</h5>
+    </div>
+    <div class="large-12 cell"> 
+        <table id="vehicleTable" class="display">
+            <thead>
+                <tr>
+                    <th>Year</th>
+                    <th>Make</th>
+                    <th>Model</th>
+                    <th>Color</th>
+                    <th>Mileage</th>
+                    <th>Style</th>
+                    <th>Interior Color</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php 
+                    $conn = new mysqli("localhost", "root", "", "WestsideAutoIncDB");
+                    $sqlvehicle = "SELECT VehicleID, Make, Model, Year, Color, Mileage, Style, InteriorColor FROM Vehicle WHERE VehicleID IN (SELECT VehicleID FROM Sale WHERE CustomerID = ".$q.")";
+                    $resultvehicle = mysqli_query($conn, $sqlvehicle);
+                    while ($rowvehicle= $resultvehicle->fetch_assoc()) {
+                        $VehicleID = $rowvehicle['VehicleID'];
+                        $Make = $rowvehicle['Make'];
+                        $Model= $rowvehicle['Model'];
+                        $Year = $rowvehicle['Year'];
+                        $Color = $rowvehicle['Color'];
+                        $Mileage = $rowvehicle['Mileage'];
+                        $Style = $rowvehicle['Style'];
+                        $InteriorColor = $rowvehicle['InteriorColor'];
+                        echo '<tr>';
+                        echo '<td>'.$Year.'</td>';
+                        echo '<td>'.$Make.'</td>';
+                        echo '<td>'.$Model.'</td>';
+                        echo '<td>'.$Color.'</td>';
+                        echo '<td>'.$Mileage.'</td>';
+                        echo '<td>'.$Style.'</td>';
+                        echo '<td>'.$InteriorColor.'</td>';
+//                        echo '<td><form action="vehicle.php?q='.$VehicleID.'" method="POST"><button type="button" class="float-right table-button">View</button>';
+                        echo '<td><a href="vehicle.php?q='.$VehicleID.'"><button type="button" class="float-right table-button">View</button></a>';
+                        echo '</tr>';
+                    }
+                ?>
+            </tbody>
+        </table>		
+    </div>
+</div>
 
 <!-- DIV FOR PAYMENT HISTORY BUTTON -->
 
@@ -194,15 +248,24 @@
                 
                      echo "<div class='grid-x grid-padding-x align-middle'>";
                     
-                    $sqlavgnodayslate = "SELECT AVG(DateDifference) AS AvgDateDifference FROM (SELECT DATEDIFF(PaidDate, ExpectedDate) AS DateDifference FROM Payment WHERE CustomerID = '".$q."') AS DateDifferences";
+                    $sqlavgnodayslate = "SELECT ROUND(AVG(DateDifference),2) AS AvgDateDifference FROM (SELECT DATEDIFF(PaidDate, ExpectedDate) AS DateDifference FROM Payment WHERE CustomerID = '".$q."') AS DateDifferences";
                     $resultavgnodayslate = mysqli_query($conn, $sqlavgnodayslate);
                     while($row = $resultavgnodayslate->fetch_assoc()) {
-                        echo "<div class='large-1 cell'>
-                                <label for='avgNoDaysLate' class='text-right middle'>Avg no. days late</label>
-                            </div>
-                            <div class='large-5 cell'>
-                                <input type='number' id='avgNoDaysLate' name='avgNoDaysLate' value='".$row['AvgDateDifference']."'disabled>
-                            </div>";
+                        if($row['AvgDateDifference'] === NULL) {
+                            echo "<div class='large-1 cell'>
+                                    <label for='avgNoDaysLate' class='text-right middle'>Avg no. days late</label>
+                                </div>
+                                <div class='large-5 cell'>
+                                    <input type='number' id='avgNoDaysLate' name='avgNoDaysLate' value='0' disabled>
+                                </div>";
+                        } else {
+                            echo "<div class='large-1 cell'>
+                                    <label for='avgNoDaysLate' class='text-right middle'>Avg no. days late</label>
+                                </div>
+                                <div class='large-5 cell'>
+                                    <input type='number' id='avgNoDaysLate' name='avgNoDaysLate' value='".$row['AvgDateDifference']."' disabled>
+                                </div>";
+                        }
                     }
                 
                     $sqlnolatepayments = "SELECT COUNT(DateDifference) AS NoLatePayments FROM (SELECT DATEDIFF(PaidDate, ExpectedDate) AS DateDifference FROM Payment WHERE CustomerID = '".$q."') AS DateDifferences WHERE DateDifference > 0";

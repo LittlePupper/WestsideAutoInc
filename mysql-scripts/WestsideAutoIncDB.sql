@@ -86,13 +86,14 @@ CREATE TABLE Vehicle (
 	Model			VARCHAR(50) NOT NULL,
 	Year			INT(4) NOT NULL,
     Style			VARCHAR(20) NOT NULL,
-	InteriorColor	VARCHAR(20) NOT NULL,
+	InteriorColor	VARCHAR(25) NOT NULL,
 	Color			VARCHAR(25) NOT NULL,
 	Mileage			INT(7) NOT NULL,
 	`Condition`		VARCHAR(20) NOT NULL,
 	BookPrice		FLOAT(8,2) NOT NULL,
 	PricePaid		FLOAT(8,2) NOT NULL,
     ListingPrice    FLOAT(8,2) NOT NULL,
+    IsSold			BOOLEAN NOT NULL,
 	PRIMARY KEY (VehicleID),
 	FOREIGN KEY (PurchaseID) REFERENCES Purchase(PurchaseID)
 );
@@ -124,7 +125,7 @@ CREATE TABLE Warranty (
 
 CREATE TABLE Coverage (
 	CoverageID		INT(6) AUTO_INCREMENT,
-	WarrantyItemID	INT(6),
+	WarrantyItemID	INT(6) NOT NULL,
 	WarrantyID 		INT(6),
 	StartDate		DATE NOT NULL,
 	EndDate			DATE NOT NULL,
@@ -137,10 +138,10 @@ CREATE TABLE Coverage (
 
 CREATE TABLE Repair (
 	RepairID	INT(6) AUTO_INCREMENT,
-	VehicleID	INT(6),
+	VehicleID	INT(6) NOT NULL,
 	Problem		VARCHAR(200) NOT NULL,
 	EstCost		FLOAT(8,2) NOT NULL,
-	ActualCost	FLOAT(8,2) NOT NULL,
+	ActualCost	FLOAT(8,2),
 	PRIMARY KEY (RepairID),
 	FOREIGN KEY (VehicleID) REFERENCES Vehicle(VehicleID)
 );

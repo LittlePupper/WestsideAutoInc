@@ -71,6 +71,7 @@
                     <li><a href="buyer.php">Buyer</a></li>
                     <li><a href="salesperson.php">Salesperson</a></li>
                     <li><a href="warrantyitem.php">Warranty Item</a></li>
+                    <li><a href="vehicle.php">Vehicle</a></li>
                 </ul>
             </div>
         </div>
@@ -82,7 +83,7 @@
                     <div class="description">Use this form when editing customer payment and employment information.</div>
                 </div>
                 
-                <!--PHP FOR INSERTING A CUSTOMER INTO THE DB-->
+                <!--PHP FOR UPDATING A CUSTOMER-->
                 
                 <?php
                     if(isset($_POST['updateCustomer'])){
@@ -99,7 +100,7 @@
 						$zip = $_POST['zip'];
 
                         $stmt = $conn->prepare("UPDATE Customer SET FirstName=?, LastName=?, Gender=?, Birthday=?, TaxID=?, Phone=?, Address=?, City=?, State=?, Zip=? WHERE CustomerID=?");
-                        $stmt->bind_param("ssssiissssi", $firstName, $lastName, $gender, $birthday, $taxID, $phone, $address, $city, $state, $zip, $customerID);
+                        $stmt->bind_param("ssssiissssi", $firstName, $lastName, $gender, $birthday, $taxID, $phone, $address, $city, $state, $zip, $customerID);                   
 
                         $stmt->execute();
                         if($stmt->affected_rows === -1) {

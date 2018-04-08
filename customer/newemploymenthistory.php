@@ -44,6 +44,7 @@
                     <li><a href="../buyer.php">Buyer</a></li>
                     <li><a href="../salesperson.php">Salesperson</a></li>
                     <li><a href="../warrantyitem.php">Warranty Item</a></li>
+                    <li><a href="../vehicle.php">Vehicle</a></li>
                 </ul>
             </div>
         </div>
