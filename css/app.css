@@ -5,6 +5,15 @@ html, body {
     margin: 0;
 }
 
+tr, td {
+    height: 20px !important;
+    padding-bottom: 0px !important;
+}
+.table-button {
+   font-size: .5em !important;
+    
+}
+
 form label {
     font-size: .85em !important;
 }
