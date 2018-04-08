@@ -15,99 +15,144 @@
                     <hr>
                 </div>
                 
-                <div class='large-12 cell'>
+                <div class='large-6 cell'>
                     <h5>" . $row['FirstName'] . " " . $row['LastName'] . "<h5>
                 </div>
-
-                <div class='large-1 cell'>
-                    <label for='firstName' class='text-right middle'>First Name</label>
-                </div>
-                <div class='large-5 cell'>
-                    <input type='text' name='firstName' id='firstName' value=" . $row['FirstName'] . ">
+                
+                <div class='large-6 cell'>
+                    <input type='hidden' id='q' name='q' value=" . $q . ">
+                    <input type='submit' class='button float-right' id='updateCustomer' name='updateCustomer' value='Update'>
                 </div>
 
                 <div class='large-1 cell'>
-                    <label for='lastName' class='text-right middle'>Last Name</label>
+                    <label for='firstName' class='text-right middle'>First name</label>
                 </div>
                 <div class='large-5 cell'>
-                    <input type='text' name='lastName' id='lastName' value=" . $row['LastName'] . ">
+                    <input type='text' 
+                           name='firstName' 
+                           id='firstName' 
+                           maxlength='50'
+                           placeholder='John'
+                           value=" . $row['FirstName'] . "
+                           required>
+                </div>
+
+                <div class='large-1 cell'>
+                    <label for='lastName' class='text-right middle'>Last name</label>
+                </div>
+                <div class='large-5 cell'>
+                    <input type='text' 
+                           name='lastName' 
+                           id='lastName' 
+                           maxlength='50'
+                           placeholder='Doe'
+                           value=" . $row['LastName'] . "
+                           required>
                 </div>
 
                 <div class='large-1 cell'>
                     <label for='gender' class='text-right middle'>Gender</label>
                 </div>
                 <div class='large-5 cell'>
-                    <input type='text' name='gender' id='gender' value=" . $row['Gender'] . ">
+                    <input type='text' 
+                           name='gender' 
+                           id='gender' 
+                           maxlength='20'
+                           placeholder='Male'
+                           value=" . $row['Gender'] . "
+                           required>
                 </div>
 
                 <div class='large-1 cell'>
                     <label for='birthday' class='text-right middle'>Birthday</label>
                 </div>
                 <div class='large-5 cell'>
-                    <input type='date' max='2999-12-31' name='birthday'value=" . $row['Birthday'] . ">
+                    <input type='date' 
+                           max='2999-12-31' 
+                           name='birthday' 
+                           value=" . $row['Birthday'] . "
+                           required>
                 </div>
 
                 <div class='large-1 cell'>
                     <label for='taxID' class='text-right middle'>Tax ID</label>
                 </div>
                 <div class='large-5 cell'>
-                    <input type='number' name='taxID' placeholder='11111111' value=" . $row['TaxID'] . ">
+                    <input type='number' 
+                           name='taxID'
+                           placeholder='1234567890' 
+                           oninput='javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);'
+                           maxlength='10'
+                           value=" . $row['TaxID'] . "
+                           required>
                 </div>
 
                 <div class='large-1 cell'>
                     <label for='phone' class='text-right middle'>Phone</label>
                 </div>
                 <div class='large-5 cell'>
-                    <input type='text' name='phone' id='phone' value=" . $row['Phone'] . ">
+                    <input type='text' 
+                           name='phone' 
+                           id='phone' 
+                           placeholder='14031234567'
+                           oninput='javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);'
+                           maxlength='11'
+                           value=" . $row['Phone'] . "
+                           required>
                 </div>
 
                 <div class='large-1 cell'>
                     <label for='address' class='text-right middle'>Address</label>
                 </div>
                 <div class='large-5 cell'>
-                    <input type='text' name='address' id='address' value=" . $row['Address'] . ">
+                    <input type='text' 
+                           name='address' 
+                           id='address' 
+                           maxlength='50'
+                           placeholder='123 Center Street SE'
+                           value=" . $row['Address'] . "
+                           required>
                 </div>
 
                 <div class='large-1 cell'>
                     <label for='city' class='text-right middle'>City</label>
                 </div>
                 <div class='large-5 cell'>
-                    <input type='text' name='city' id='city' value=" . $row['City'] . ">
+                    <input type='text' 
+                           name='city' 
+                           id='city' 
+                           maxlength='20'
+                           placeholder='Calgary'
+                           value=" . $row['City'] . "
+                           required>
                 </div>
 
                 <div class='large-1 cell'>
                     <label for='state' class='text-right middle'>State</label>
                 </div>
                 <div class='large-5 cell'>
-                    <input type='text' name='state' id='state' value=" . $row['State'] . ">
+                    <input type='text' 
+                           name='state' 
+                           id='state' 
+                           maxlength='20'
+                           placeholder='Alberta'
+                           value=" . $row['State'] . "
+                           required>
                 </div>
 
                 <div class='large-1 cell'>
-                    <label for='zip' class='text-right middle'>ZIP Code</label>
+                    <label for='zip' class='text-right middle'>ZIP code</label>
                 </div>
                 <div class='large-5 cell'>
-                    <input type='text' name='zip' id='zip' value=" . $row['Zip'] . ">
-                </div>
-
-                <div class='large-1 cell'>
-                    <label for='noLatePayments' class='text-right middle'>No. late payments</label>
-                </div>
-                <div class='large-5 cell'>
-                    <input type='number' name='noLatePayments' disabled>
-                </div>
-
-                <div class='large-1 cell'>
-                    <label for='avgNoDaysLate' class='text-right middle'>Avg no. days late</label>
-                </div>
-                <div class='large-5 cell'>
-                    <input type='number' name='avgNoDaysLate' disabled>
+                    <input type='text' 
+                           name='zip' 
+                           id='zip' 
+                           maxlength='6'
+                           placeholder='T1K4G3'
+                           value=" . $row['Zip'] . "
+                           required>
                 </div>
             </div>
-            <!--<div class='grid-x grid-padding-x'>
-                <div class='large-12 cell'>
-                    <input type='submit' class='button float-right' id='finalize-customer' name='finalize-customer' value='Create'>
-                </div>
-            </div>-->
         </form>";
     }
     mysqli_close($conn);
@@ -116,6 +161,9 @@
 <!-- DIV FOR PAYMENT HISTORY BUTTON -->
 
 <div class="grid-x grid-padding-x align-middle">
+    <div class='large-12 cell'>
+        <hr>
+    </div>
     <div class="large-6 cell">
         <h5>Payment history</h5>
     </div>
@@ -143,9 +191,36 @@
             <tbody>
                 <?php 
                     $conn = new mysqli("localhost", "root", "", "WestsideAutoIncDB");
+                
+                     echo "<div class='grid-x grid-padding-x align-middle'>";
+                    
+                    $sqlavgnodayslate = "SELECT AVG(DateDifference) AS AvgDateDifference FROM (SELECT DATEDIFF(PaidDate, ExpectedDate) AS DateDifference FROM Payment WHERE CustomerID = '".$q."') AS DateDifferences";
+                    $resultavgnodayslate = mysqli_query($conn, $sqlavgnodayslate);
+                    while($row = $resultavgnodayslate->fetch_assoc()) {
+                        echo "<div class='large-1 cell'>
+                                <label for='avgNoDaysLate' class='text-right middle'>Avg no. days late</label>
+                            </div>
+                            <div class='large-5 cell'>
+                                <input type='number' id='avgNoDaysLate' name='avgNoDaysLate' value='".$row['AvgDateDifference']."'disabled>
+                            </div>";
+                    }
+                
+                    $sqlnolatepayments = "SELECT COUNT(DateDifference) AS NoLatePayments FROM (SELECT DATEDIFF(PaidDate, ExpectedDate) AS DateDifference FROM Payment WHERE CustomerID = '".$q."') AS DateDifferences WHERE DateDifference > 0";
+                    $resultnolatepayments = mysqli_query($conn, $sqlnolatepayments);
+                    while($row = $resultnolatepayments->fetch_assoc()) {
+                        echo "<div class='large-1 cell'>
+                                    <label for='noLatePayments' class='text-right middle'>No. late payments</label>
+                                </div>
+                                <div class='large-5 cell'>
+                                    <input type='number' id='noLatePayments' name='noLatePayments' value='".$row['NoLatePayments']."'disabled>
+                                </div>
+                            </div>";
+                    }
+
                     $sqlpayment = "SELECT * FROM Payment WHERE CustomerID = '".$q."' ORDER BY PaymentID DESC";
-                    $result = mysqli_query($conn, $sqlpayment);
-                    while ($row = $result->fetch_assoc()) {
+                    $resultpayment = mysqli_query($conn, $sqlpayment);
+                    
+                    while ($row = $resultpayment->fetch_assoc()) {
                         $ExpectedDate = $row['ExpectedDate'];
                         $PaidDate = $row['PaidDate'];
                         $AmountDue = $row['AmountDue'];
@@ -168,6 +243,9 @@
 <!-- DIV FOR EMPLOYMENT HISTORY BUTTON -->
 
 <div class="grid-x grid-padding-x align-middle">
+    <div class='large-12 cell'>
+        <hr>
+    </div>
     <div class="large-6 cell">
         <h5>Employment history</h5>
     </div>

@@ -97,19 +97,29 @@
                             <label for="firstName" class="text-right middle">Type</label>
                         </div>
                         <div class="small-9 medium-10 large-11 cell">
-                            <input type="text" name="type" id="type" placeholder="Radiator" required>
+                            <input type="text" 
+                                   name="type" 
+                                   id="type" 
+                                   maxlength="50"
+                                   placeholder="Stereo" 
+                                   required>
                         </div>
 
                         <div class="small-3 medium-2 large-1 cell">
                             <label for="description" class="text-right middle">Description</label>
                         </div>
                         <div class="small-9 medium-10 large-11 cell">
-                            <textarea name="description" placeholder="This warranty covers..." required></textarea>
+                            <textarea id="description" 
+                                      name="description" 
+                                      maxlength="200"
+                                      placeholder="This warranty covers..." 
+                                      required></textarea>
                         </div>
+                        <div id="textarea_feedback" class="small-12 cell text-right"></div>
 
                     </div>
                         
-                    <div class="grid-x grid-padding-x">
+                    <div class="grid-x grid-padding-x grid-padding-y">
                         <div class="large-12 cell">
                             <input type="submit" class="button float-right" id="addWarrantyItem" name="addWarrantyItem" value="Create warranty item">
                         </div>
@@ -127,7 +137,20 @@
 		
 		<script type="text/javascript" src="js/vendor/foundation.min.js"></script>
         <script src="js/foundation/foundation.alert.js"></script>
-		<script type="text/javascript" src="js/app.js"></script>		
+		<script type="text/javascript" src="js/app.js"></script>	
+        <script type="text/javascript">
+            $(document).ready(function() {
+                var text_max = 200;
+                $('#textarea_feedback').html(text_max + ' characters remaining');
+
+                $('#description').keyup(function() {
+                    var text_length = $('#description').val().length;
+                    var text_remaining = text_max - text_length;
+
+                    $('#textarea_feedback').html(text_remaining + ' characters remaining');
+                });
+            });
+        </script>
 	</body>
 </html>
 

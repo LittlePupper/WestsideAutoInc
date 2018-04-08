@@ -98,22 +98,39 @@
                             <label for="firstName" class="text-right middle">First name</label>
                         </div>
                         <div class="small-9 medium-4 large-5 cell">
-                            <input type="text" name="firstName" id="firstName" placeholder="John" required>
+                            <input type="text" 
+                                   name="firstName" 
+                                   id="firstName" 
+                                   maxlength="25"
+                                   placeholder="John" 
+                                   required>
                         </div>
 
                         <div class="small-3 medium-2 large-1 cell">
                             <label for="lastName" class="text-right middle">Last name</label>
                         </div>
                         <div class="small-9 medium-4 large-5 cell">
-                            <input type="text" name="lastName" id="lastName" placeholder="Doe" required>
+                            <input type="text" 
+                                   name="lastName" 
+                                   id="lastName" 
+                                   maxlength="25"
+                                   placeholder="Doe" 
+                                   required>
                         </div>
 
                         <div class="small-3 medium-2 large-1 cell">
                             <label for="phone" class="text-right middle">Phone</label>
                         </div>
                         <div class="small-9 medium-4 large-5 cell">
-                            <input type="number" name="phone" placeholder="14031234567" required>
+                            <input type="number" 
+                                   name="phone" 
+                                   placeholder="14031234567" 
+                                   pattern="^[0-9]*$" 
+                                   oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"
+                                   maxlength="11" 
+                                   required>
                         </div>
+
 
                     </div>
                         

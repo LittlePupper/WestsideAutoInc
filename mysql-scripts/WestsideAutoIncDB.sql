@@ -85,13 +85,14 @@ CREATE TABLE Vehicle (
 	Make			VARCHAR(50) NOT NULL,
 	Model			VARCHAR(50) NOT NULL,
 	Year			INT(4) NOT NULL,
+    Style			VARCHAR(20) NOT NULL,
+	InteriorColor	VARCHAR(20) NOT NULL,
 	Color			VARCHAR(25) NOT NULL,
 	Mileage			INT(7) NOT NULL,
 	`Condition`		VARCHAR(20) NOT NULL,
 	BookPrice		FLOAT(8,2) NOT NULL,
 	PricePaid		FLOAT(8,2) NOT NULL,
-	Style			VARCHAR(20) NOT NULL,
-	InteriorColor	VARCHAR(20) NOT NULL,
+    ListingPrice    FLOAT(8,2) NOT NULL,
 	PRIMARY KEY (VehicleID),
 	FOREIGN KEY (PurchaseID) REFERENCES Purchase(PurchaseID)
 );

@@ -1,4 +1,20 @@
 <!DOCTYPE html>
+<?php
+    // Create connection
+    function connect_sql() {
+        $conn = new mysqli("localhost", "root", "", "WestsideAutoIncDB");
+        
+        // Check connection
+        if ($conn->error) {
+            die("Error: " . $conn->error);
+        }
+        return $conn;
+    }
+?>
+
+<?php 
+    $conn = connect_sql();
+?>
 
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
 
@@ -11,6 +27,8 @@
 		<link rel="stylesheet" href="css/app.css">
         <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
 		<link href="css/foundation.min.css" rel="stylesheet" type="text/css" />
+		<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/foundation/6.4.3/css/foundation.min.css">
+		<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.16/css/dataTables.foundation.min.css">
 	</head>
 	
 	<body>
@@ -37,233 +55,342 @@
                     <div class="title">Sell a vehicle</div>
                     <div class="description">Use this form when selling a vehicle to a customer.</div>
                 </div>
-                <form>
-                    
-                    <fieldset>
-                        <div class="grid-x grid-padding-x align-middle">
-                            <div class="large-1 cell">
-                                <label for="middle-label" class="text-right middle">Customer search</label>
-                            </div>
-                            <div class="large-5 cell">
-                                <div class="input-group">
-                                    <input class="input-group-field" type="text" placeholder="John Doe">
-                                    <div class="input-group-button">
-                                        <input type="submit" class="button" value="Search">
-                                    </div>
-                                </div>
-                            </div>
+				 <fieldset>
+                    <div class="grid-x grid-padding-x ">
+                        <div class="large-1 cell">
+                            <label for="middle-label" class="text-right middle">Salesperson</label>
                         </div>
-                    </fieldset>
-                    
-                    <fieldset>
-                        <div class="grid-x grid-padding-x align-middle">    
-                            <div class="large-12 cell">
-                                <hr>
-                            </div>
+                        <div class="large-5 cell">
+                            <?php 
+                                $sql = "SELECT SalespersonID, FirstName, LastName FROM Salesperson ORDER BY LastName";
+                                $result = mysqli_query($conn, $sql);
 
-                            <div class="large-1 cell">
-                                <label for="name" class="text-right middle">Name</label>
-                            </div>
-                            <div class="large-5 cell">
-                                <input type="text" name="name" id="name">
-                            </div>
-
-                            <div class="large-1 cell">
-                                <label for="gender" class="text-right middle">Gender</label>
-                            </div>
-                            <div class="large-5 cell">
-                                <input type="text" name="gender" id="gender">
-                            </div>
-
-                            <div class="large-1 cell">
-                                <label for="birthday" class="text-right middle">Birthday</label>
-                            </div>
-                            <div class="large-5 cell">
-                                <input type="date" name="birthday">
-                            </div>
-
-                            <div class="large-1 cell">
-                                <label for="taxID" class="text-right middle">Tax ID</label>
-                            </div>
-                            <div class="large-5 cell">
-                                <input type="number" name="taxID" placeholder="11111111">
-                            </div>
-                            
-                            <div class="large-1 cell">
-                                <label for="noLatePayments" class="text-right middle">No. late payments</label>
-                            </div>
-                            <div class="large-5 cell">
-                                <input type="number" name="noLatePayments" disabled>
-                            </div>
-                            
-                            <div class="large-1 cell">
-                                <label for="avgNoDaysLate" class="text-right middle">Avg no. days late</label>
-                            </div>
-                            <div class="large-5 cell">
-                                <input type="number" name="avgNoDaysLate" disabled>
-                            </div>
+                                echo "<select name='buyerID'>";
+                                while ($row = $result->fetch_assoc()) {
+                                    $SalespersonID = $row['SalespersonID'];
+                                    $FirstName = $row['FirstName'];
+                                    $LastName = $row['LastName'];
+                                    echo '<option value="'.$SalespersonID.'">' .$LastName.', ' .$FirstName. '</option>';
+                                }
+                                echo "</select>";
+                            ?>
                         </div>
-                    </fieldset>
-                        
-                    <fieldset id="car">
-                        <div class="vehicle-group">
-                            <div class="grid-x grid-padding-x">
-                                <div class="large-12 cell">
-                                        <hr>
-                                    </div>
-                                <div class="large-1 cell">
-                                    <label for="make" class="text-right middle">Make</label>
-                                </div>
-                                <div class="large-5 cell">
-                                    <input type="text" name="make" placeholder="Volkswagen">
-                                </div>
+                    </div>
+                        </fieldset>	
+				  <?php
+                    if(isset($_POST['finalize-customer'])){
+                        $firstName = $_POST['firstName'];
+                        $lastName = $_POST['lastName'];
+						$gender = $_POST['gender'];
+						$birthday = $_POST['birthday'];
+						$taxID = $_POST['taxID'];
+                        $phone = $_POST['phone'];
+						$address = $_POST['address'];
+						$city = $_POST['city'];
+						$state = $_POST['state'];
+						$zip = $_POST['zip'];
 
-                                <div class="large-1 cell">
-                                    <label for="model" class="text-right middle">Model</label>
-                                </div>
-                                <div class="large-5 cell">
-                                    <input type="text" name="model" placeholder="Golf">
-                                </div>
+                        $stmt = $conn->prepare("INSERT INTO Customer (FirstName, LastName, Gender, Birthday, TaxID, Phone, Address, City, State, Zip) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                        $stmt->bind_param("ssssiissss", $firstName, $lastName, $gender, $birthday, $taxID, $phone, $address, $city, $state, $zip);
 
-                                <div class="large-1 cell">
-                                    <label for="year" class="text-right middle">Year</label>
-                                </div>
-                                <div class="large-5 cell">
-                                    <input type="number" name="year" placeholder="2008">
-                                </div>
+                        $stmt->execute();
+                        if($stmt->affected_rows === -1) {
+                            echo '<div class="large-12 cell "><div data-closable class="callout alert-callout-border alert">
+                            <strong>Boo!</strong> - It broke!
+                            <button class="close-button" aria-label="Dismiss alert" type="button" data-close>
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                            </div></div>';
+                        } else {
+                            echo '<div class="large-12 cell "><div data-closable class="callout alert-callout-border success">
+                            <strong>Yay!</strong> - You sold a new vehicle!
+                            <button class="close-button" aria-label="Dismiss alert" type="button" data-close>
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div></div>';
+                            }
 
-                                <div class="large-1 cell">
-                                    <label for="style" class="text-right middle">Style</label>
-                                </div>
-                                <div class="large-5 cell">
-                                    <select name="style">
-                                        <option value="convertible">Convertible</option>
-                                        <option value="coupe">Coupe</option>
-                                        <option value="crossover">Crossover</option>
-                                        <option value="hatchback">Hatchback</option>
-                                        <option value="mpv">MPV</option>
-                                        <option value="sedan">Sedan</option>
-                                        <option value="suv">SUV</option>
-                                        <option value="station-wagon">Station wagon</option>
-                                        <option value="truck">Truck</option>
-                                        <option value="van">Van</option>
-                                        <option value="other">Other</option>
-                                    </select>
-                                </div>  
-
-                                <div class="large-1 cell">
-                                    <label for="color" class="text-right middle">Color</label>
-                                </div>
-                                <div class="large-5 cell">
-                                    <input type="text" name="color" placeholder="Red">
-                                </div>
-
-                                <div class="large-1 cell">
-                                    <label for="interior" class="text-right middle">Interior</label>
-                                </div>
-                                <div class="large-5 cell">
-                                    <input type="text" name="interior" placeholder="Tan">
-                                </div>
-
-                                <div class="large-1 cell">
-                                    <label for="mileage" class="text-right middle">Mileage</label>
-                                </div>
-                                <div class="large-5 cell">
-                                    <div class="input-group">
-                                        <input class="input-group-field" type="number" name="mileage" placeholder="15000">
-                                        <span class="input-group-label">km</span>
-                                    </div>
-                                </div>
-
-                                <div class="large-1 cell">
-                                    <label for="condition" class="text-right middle">Condition</label>
-                                </div>
-                                <div class="large-5 cell">
-                                    <input type="text" name="condition" placeholder="Mint">
-                                </div>
-
-                                <div class="large-1 cell">
-                                    <label for="bookPrice" class="text-right middle">Book price</label>
-                                </div>
-                                <div class="large-5 cell">
-                                    <div class="input-group">
-                                        <span class="input-group-label">$</span>
-                                        <input class="input-group-field" name="bookPrice" type="number" placeholder="3549.00">
-                                    </div>
-                                </div>
-
-                                <div class="large-1 cell">
-                                    <label for="pricePaid" class="text-right middle">Price paid</label>
-                                </div>
-                                <div class="large-5 cell">
-                                    <div class="input-group">
-                                        <span class="input-group-label">$</span>
-                                        <input class="input-group-field" name="pricePaid" type="number" placeholder="2950.00">
-                                    </div>
-                                </div>
-                            </div>  
-
-                            <fieldset id="problem">
-                                <div class="grid-x grid-padding-x problem-group"> 
-                                    <div class="large-12 cell">
-                                        <hr>
-                                    </div>                
-                                        <div class="large-1 cell">
-                                            <label for="problemNo" class="text-right middle">Problem #</label>
-                                        </div>
-                                        <div class="large-1 cell">
-                                            <input type="number" name="problemNo" placeholder="1">
-                                        </div>
-
-                                        <div class="large-3 cell">
-                                            <label for="estCost" class="text-right middle">Est. cost</label>
-                                        </div>
-                                        <div class="large-2 cell">
-                                            <div class="input-group">
-                                                <span class="input-group-label">$</span>
-                                                <input class="input-group-field" name="estCost" type="number" placeholder="400.00">
-                                            </div>
-                                        </div>
-
-                                        <div class="large-3 cell">
-                                            <label for="actualCost" class="text-right middle">Actual cost</label>
-                                        </div>
-                                        <div class="large-2 cell">
-                                            <div class="input-group">
-                                                <span class="input-group-label">$</span>
-                                                <input class="input-group-field" name="actualCost" type="number" placeholder="300.00">
-                                            </div>
-                                        </div>
-
-                                        <div class="large-1 cell">
-                                            <label for="problem" class="text-right middle">Problem</label>
-                                        </div>                        
-                                        <div class="large-11 cell">
-                                            <textarea name="problem" placeholder="The problem is..."></textarea>
-                                        </div>
-                                </div>
-                            </fieldset>
-                        
-                            <div class="grid-x grid-padding-x">
-                                <div class="large-12 cell">
-                                    <input type="button" class="button float-right" id="add-problem" name="add-problem" value="Add problem" />
-                                </div>
-                            </div>
-                            
-                        </div>
-                        
-                    </fieldset>
-                    
-                    <div class="grid-x grid-padding-x">
+                        $stmt->close();
+                    }
+                ?>
+                
+                <!--CUSTOMER INFORMATION-->
+                
+                <form class="data" action="sale.php" method="post">
+                    <div class="grid-x grid-padding-x align-middle">    
                         <div class="large-12 cell">
-                            <input type="button" class="button float-right" id="add-vehicle" name="add-vehicle" value="Add vehicle" />
+                            <hr>
+                        </div>
+
+                        <div class='large-1 cell'>
+                            <label for='firstName' class='text-right middle'>First name</label>
+                        </div>
+                        <div class='large-5 cell'>
+                            <input type='text' 
+                                   name='firstName' 
+                                   id='firstName' 
+                                   placeholder='John'
+                                   maxlength='50'
+                                   required>
+                        </div>
+
+                        <div class='large-1 cell'>
+                            <label for='lastName' class='text-right middle'>Last name</label>
+                        </div>
+                        <div class='large-5 cell'>
+                            <input type='text' 
+                                   name='lastName' 
+                                   id='lastName' 
+                                   placeholder='Doe'
+                                   maxlength='50'
+                                   required>
+                        </div>
+
+                        <div class='large-1 cell'>
+                            <label for='gender' class='text-right middle'>Gender</label>
+                        </div>
+                        <div class='large-5 cell'>
+                            <input type='text' 
+                                   name='gender' 
+                                   id='gender' 
+                                   placeholder='Male'
+                                   maxlength='20'
+                                   required>
+                        </div>
+
+                        <div class='large-1 cell'>
+                            <label for='birthday' class='text-right middle'>Birthday</label>
+                        </div>
+                        <div class='large-5 cell'>
+                            <input type='date' 
+                                   max='2999-12-31' 
+                                   name='birthday' 
+                                   required>
+                        </div>
+
+                        <div class='large-1 cell'>
+                            <label for='taxID' class='text-right middle'>Tax ID</label>
+                        </div>
+                        <div class='large-5 cell'>
+                            <input type='number' 
+                                   name='taxID'
+                                   placeholder='1234567890' 
+                                   oninput='javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);'
+                                   maxlength='10'
+                                   required>
+                        </div>
+
+                        <div class='large-1 cell'>
+                            <label for='phone' class='text-right middle'>Phone</label>
+                        </div>
+                        <div class='large-5 cell'>
+                            <input type='text' 
+                                   name='phone' 
+                                   id='phone' 
+                                   placeholder='14031234567'
+                                   oninput='javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);'
+                                   maxlength='11'
+                                   required>
+                        </div>
+
+                        <div class='large-1 cell'>
+                            <label for='address' class='text-right middle'>Address</label>
+                        </div>
+                        <div class='large-5 cell'>
+                            <input type='text' 
+                                   name='address' 
+                                   id='address' 
+                                   placeholder='123 Center Street SE'
+                                   maxlength='50'
+                                   required>
+                        </div>
+
+                        <div class='large-1 cell'>
+                            <label for='city' class='text-right middle'>City</label>
+                        </div>
+                        <div class='large-5 cell'>
+                            <input type='text' 
+                                   name='city' 
+                                   id='city' 
+                                   placeholder='Calgary'
+                                   maxlength='20'
+                                   required>
+                        </div>
+
+                        <div class='large-1 cell'>
+                            <label for='state' class='text-right middle'>State</label>
+                        </div>
+                        <div class='large-5 cell'>
+                            <input type='text' 
+                                   name='state' 
+                                   id='state' 
+                                   placeholder='Alberta'
+                                   maxlength='20'
+                                   required>
+                        </div>
+
+                        <div class='large-1 cell'>
+                            <label for='zip' class='text-right middle'>ZIP code</label>
+                        </div>
+                        <div class='large-5 cell'>
+                            <input type='text' 
+                                   name='zip' 
+                                   id='zip' 
+                                   maxlength='6'
+                                   placeholder='T1K4G3'
+                                   required>
+                        </div>
+                        <div class="large-12 cell">
+                            <hr>
                         </div>
                     </div>
                     
+                    <!--TABLE OF VEHICLES-->
+                    
+                    <div class="grid-x grid-padding-x">
+                        <div class="large-12 cell">
+                            <table id="customerTable" class="display">
+                                <thead>
+                                    <tr>
+                                        <th>Make</th>
+                                        <th>Mode</th>
+                                        <th>Year</th>
+                                        <th>Color</th>
+                                        <th>Mileage</th>
+                                        <th>Style</th>
+                                        <th>Interior Color</th>
+                                        <th>Listing Price</th>
+                                        <th>Selected</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php 
+                                        $sql = "SELECT VehicleID, Make, Model, Year, Color, Mileage, Style, InteriorColor, ListingPrice FROM Vehicle";
+                                        $result = mysqli_query($conn, $sql);
+                                        while ($row = $result->fetch_assoc()) {
+                                            $Make = $row['Make'];
+                                            $Model= $row['Model'];
+                                            $Year = $row['Year'];
+                                            $Color = $row['Color'];
+                                            $Mileage = $row['Mileage'];
+                                            $Style = $row['Style'];
+                                            $InteriorColor = $row['InteriorColor'];
+                                            $ListingPrice = $row['ListingPrice'];
+                                            echo '<tr>';
+                                            echo '<td>'.$Make.'</td>';
+                                            echo '<td>'.$Model.'</td>';
+                                            echo '<td>'.$Year.'</td>';
+                                            echo '<td>'.$Color.'</td>';
+                                            echo '<td>'.$Mileage.'</td>';
+                                            echo '<td>'.$Style.'</td>';
+                                            echo '<td>'.$InteriorColor.'</td>';
+                                            echo '<td>'.$ListingPrice.'</td>';	
+                                            echo '<td><input type="radio" id="'.$ListingPrice.'" name="vehicleChoice"></td>';	
+                                            echo '</tr>';
+
+                                        }
+                                    ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <!--WARRANTY-->
+                    
+                    <div class="grid-x grid-padding-x align-middle"> 
+                        <div class="large-1 cell">
+                            <label for="WarrantyItem" class="text-right middle">Warranty type</label>
+                        </div>
+                        <div class="large-5 cell">
+                            <?php 
+                                $sql = "SELECT WarrantyItemID, Type FROM WarrantyItem ORDER BY Type";
+                                $result = mysqli_query($conn, $sql);
+
+                                echo "<select name='WarrantyItem'>";
+                                while ($row = $result->fetch_assoc()) {
+                                    $WarrantyItemID = $row['WarrantyItemID'];
+                                    $Type = $row['Type'];
+                                    echo '<option value="'.$WarrantyItemID.'">' .$Type.'</option>';
+                                }
+                                echo "</select>";
+                            ?>			
+                        </div>
+                        <div class="large-1 cell">
+                            <label for="year" class="text-right middle">Cost</label>
+                        </div>
+                        <div class="large-5 cell">
+                            <input type="number" name="Cost" placeholder="$0000">
+                        </div>
+
+                        <div class="large-1 cell">
+                            <label for="make" class="text-right middle">Start Date</label>
+                        </div>
+                        <div class="large-5 cell">
+                            <input type="date" max="2999-12-31" name="StartDate">
+                        </div>
+
+                        <div class="large-1 cell">
+                            <label for="model" class="text-right middle">End Date</label>
+                        </div>
+                        <div class="large-5 cell">
+                            <input type="date" max="2999-12-31" name="EndDate">
+                        </div>
+
+                        <div class="large-1 cell">
+                            <label for="style" class="text-right middle">Deductable</label>
+                        </div>
+
+                        <div class="large-5 cell">
+                            <input type="number" name="Deductable" placeholder="$0000">
+                        </div>
+                        
+                        <div class="large-12 cell">
+                            <input type="button" class="button float-right" id="add-problem" name="add-vehicle" value="Add another warranty" />
+                        </div>
+                    </div>  
+                    
+
+                    <div class="finalizeTemplate grid-x grid-padding-x"> 
+                        <div class="large-12 cell">
+                            <hr>
+                        </div>                
+                        <div class="large-7 cell">
+                            <label for="Commission" class="text-right middle">Commission:</label>
+                        </div>
+                        <div class="large-5 cell">
+                            <input type="number" name="Commission" placeholder="$1000.00"><br>
+                        </div>
+                        
+                        <div class="large-7 cell">
+                            <label for="DownPayment" class="text-right middle">Down Payment:</label>
+                        </div>
+                        <div class="large-5 cell">
+                            <input type="number" name="DownPayment" placeholder="$0000"><br>
+                        </div>
+
+                        <div class="large-7 cell">
+                            <label for="TotalDue" class="text-right middle">Finance Amount:</label>
+                        </div>
+                        <div class="large-5 cell">
+                            <input type="number" name="Finance Amount" placeholder="$0000"><br>
+                        </div>
+
+                        <div class="large-7 cell">
+                            <label for="TotalDue" class="text-right middle">Total Due:</label>
+                        </div>
+                        <div class="large-5 cell">
+                            <input type="number" name="TotalDue" placeholder="$0000" disabled><br>
+                        </div>
+                        
+                        <div class="large 12 cell">
+                            <input type="submit" class="button float-right" id="submitSale" name="submitSale" value="Submit sale">
+                        </div>
+                    </div><!--/finalizeTemplate-->
                 </form>
-            </div>
-        </div>
-        
+            
+            </div><!--/grid-container-->
+        </div><!--/form-->
+    
         <!-- JQUERY FIRST -->
 		
 		<script type="text/javascript" src="js/vendor/jquery.js"></script>
@@ -287,5 +414,18 @@
 		
 		<script type="text/javascript" src="js/vendor/foundation.min.js"></script>
 		<script type="text/javascript" src="js/app.js"></script>		
+		<script type="text/javascript" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+        <script type="text/javascript" src="https://cdn.datatables.net/1.10.16/js/dataTables.foundation.min.js"></script>
+        
+		<script type="text/javascript"> 
+            $(document).ready( function () {
+                $('#customerTable').DataTable();
+            });
+		</script>
+    
 	</body>
 </html>
+
+<?php 
+    $conn->close();
+?>

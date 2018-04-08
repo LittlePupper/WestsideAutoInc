@@ -85,7 +85,8 @@
                 <!--PHP FOR INSERTING A CUSTOMER INTO THE DB-->
                 
                 <?php
-                    if(isset($_POST['finalize-customer'])){
+                    if(isset($_POST['updateCustomer'])){
+                        $customerID = $_POST['q'];
                         $firstName = $_POST['firstName'];
                         $lastName = $_POST['lastName'];
 						$gender = $_POST['gender'];
@@ -97,8 +98,8 @@
 						$state = $_POST['state'];
 						$zip = $_POST['zip'];
 
-                        $stmt = $conn->prepare("INSERT INTO Customer (FirstName, LastName, Gender, Birthday, TaxID, Phone, Address, City, State, Zip) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-                        $stmt->bind_param("ssssiissss", $firstName, $lastName, $gender, $birthday, $taxID, $phone, $address, $city, $state, $zip);
+                        $stmt = $conn->prepare("UPDATE Customer SET FirstName=?, LastName=?, Gender=?, Birthday=?, TaxID=?, Phone=?, Address=?, City=?, State=?, Zip=? WHERE CustomerID=?");
+                        $stmt->bind_param("ssssiissssi", $firstName, $lastName, $gender, $birthday, $taxID, $phone, $address, $city, $state, $zip, $customerID);
 
                         $stmt->execute();
                         if($stmt->affected_rows === -1) {
@@ -110,7 +111,7 @@
                             </div></div>';
                         } else {
                             echo '<div class="large-12 cell "><div data-closable class="callout alert-callout-border success">
-                            <strong>Yay!</strong> - You added a new customer!
+                            <strong>Yay!</strong> - You updated a customer!
                             <button class="close-button" aria-label="Dismiss alert" type="button" data-close>
                                 <span aria-hidden="true">&times;</span>
                             </button>
@@ -128,24 +129,28 @@
                         <table id="customerTable" class="display">
                             <thead>
                                 <tr>
-                                    <th>Customer ID</th>
                                     <th>First Name</th>
                                     <th>Last Name</th>
+                                    <th>Gender</th>
+                                    <th>Phone</th>
                                     <th></th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <?php 
-                                    $sql = "SELECT CustomerID, FirstName, LastName FROM Customer";
+                                    $sql = "SELECT CustomerID, FirstName, LastName, Gender, Phone FROM Customer";
                                     $result = mysqli_query($conn, $sql);
                                     while ($row = $result->fetch_assoc()) {
                                         $CustomerID = $row['CustomerID'];
                                         $FirstName = $row['FirstName'];
                                         $LastName = $row['LastName'];
+                                        $Gender = $row['Gender'];
+                                        $Phone = $row['Phone'];
                                         echo '<tr>';
-                                        echo '<td>'.$CustomerID.'</td>';
                                         echo '<td>'.$FirstName.'</td>';
                                         echo '<td>'.$LastName.'</td>';
+                                        echo '<td>'.$Gender.'</td>';
+                                        echo '<td>'.$Phone.'</td>';
                                         echo '<td><button type="button" id="'.$CustomerID.'" class="float-right table-button" onclick="showUser(this.id)">Edit</button></td>';
                                         echo '</tr>';
                                     }
@@ -175,17 +180,15 @@
 		<script type="text/javascript"> 
             $(document).ready( function () {
                 $('#customerTable').DataTable();
-                $('#exampleModal1').foundation('open');
             });
 		</script>
 	</body>
 </html>
 <?php 
-    if(isset($_GET['q']))
-    {
-       echo '<script type="text/javascript">
+    if(isset($_GET['q'])) {
+        echo '<script type="text/javascript">
                 showUser('.$_GET['q'].');
-            </script>';
+              </script>';
     }
     $conn->close();
 ?>
