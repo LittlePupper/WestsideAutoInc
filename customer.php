@@ -11,6 +11,7 @@
         }
         return $conn;
     }
+    
 ?>
 
 <?php 
@@ -77,8 +78,8 @@
         <div class="form">
             <div class="grid-container">
                 <div class="large-12 cell">
-                    <div class="title">Payments made by a customer</div>
-                    <div class="description">Use this form when editing customer payment information.</div>
+                    <div class="title">Customer info</div>
+                    <div class="description">Use this form when editing customer payment and employment information.</div>
                 </div>
                 
                 <!--PHP FOR INSERTING A CUSTOMER INTO THE DB-->
@@ -155,7 +156,7 @@
                 </div>
                 
                 <div id="txtHint">Customer data will be displayed here...</div>
-
+                
             </div>
         </div>
         
@@ -174,11 +175,17 @@
 		<script type="text/javascript"> 
             $(document).ready( function () {
                 $('#customerTable').DataTable();
+                $('#exampleModal1').foundation('open');
             });
 		</script>
 	</body>
 </html>
-
 <?php 
+    if(isset($_GET['q']))
+    {
+       echo '<script type="text/javascript">
+                showUser('.$_GET['q'].');
+            </script>';
+    }
     $conn->close();
 ?>

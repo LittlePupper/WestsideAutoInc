@@ -2,15 +2,21 @@
     $q = intval($_GET['q']);
     $conn = new mysqli("localhost", "root", "", "WestsideAutoIncDB");
 
-    mysqli_select_db($conn,"ajax_demo");
     $customersql="SELECT * FROM Customer WHERE CustomerID = '".$q."'";
     $result = mysqli_query($conn, $customersql);    
 
+    /* CUSTOMER INPUTS BASED ON THE SELECTION FROM THE CUSTOMER TABLE */
+
     while($row = mysqli_fetch_array($result)) {
+        echo '';
         echo "<form class='data' action='customer.php' method='post'>
             <div class='grid-x grid-padding-x align-middle'>    
                 <div class='large-12 cell'>
                     <hr>
+                </div>
+                
+                <div class='large-12 cell'>
+                    <h5>" . $row['FirstName'] . " " . $row['LastName'] . "<h5>
                 </div>
 
                 <div class='large-1 cell'>
@@ -97,26 +103,30 @@
                     <input type='number' name='avgNoDaysLate' disabled>
                 </div>
             </div>
-            <div class='grid-x grid-padding-x'>
+            <!--<div class='grid-x grid-padding-x'>
                 <div class='large-12 cell'>
                     <input type='submit' class='button float-right' id='finalize-customer' name='finalize-customer' value='Create'>
                 </div>
-            </div>
+            </div>-->
         </form>";
     }
     mysqli_close($conn);
 ?>
 
-<!-- PAYMENT MODAL -->
+<!-- DIV FOR PAYMENT HISTORY BUTTON -->
 
 <div class="grid-x grid-padding-x align-middle">
     <div class="large-6 cell">
         <h5>Payment history</h5>
     </div>
     <div class="large-6 cell"> 
-        <button class="button float-right" data-open="paymentModal">New payment</button>
+        <?php 
+            echo '<a href="customer/newpayment.php?q='.$q.'"><button class="button float-right">New payment</button></a>';
+        ?>
     </div>
 </div>
+
+<!-- PAYMENT HISTORY TABLE -->
 
 <div class="grid-x grid-padding-x align-middle">
     <div class="large-12 cell"> 
@@ -155,14 +165,20 @@
     </div>
 </div>
 
+<!-- DIV FOR EMPLOYMENT HISTORY BUTTON -->
+
 <div class="grid-x grid-padding-x align-middle">
     <div class="large-6 cell">
         <h5>Employment history</h5>
     </div>
     <div class="large-6 cell"> 
-        <button class="button float-right" data-open="employmentHistoryModal">New employment history</button>
+        <?php 
+            echo '<a href="customer/newemploymenthistory.php?q='.$q.'"><button class="button float-right">New employment history</button></a>';
+        ?>
     </div>
 </div>
+
+<!-- EMPLOYMENT HISTORY TABLE -->
 
 <div class="grid-x grid-padding-x align-middle">
     <div class="large-12 cell float-bottom"> 
@@ -202,119 +218,4 @@
             </tbody>
         </table>		
     </div>
-</div>
-
-
-<div class="reveal" id="paymentModal" data-reveal>
-    <div class="description">New payment</div>
-    <form>
-        <div class="grid-x grid-padding-x align-middle">
-
-            <div class="large-2 cell align-middle">
-                <label for="paymentDate" class="text-right middle">Payment date</label>
-            </div>
-            <div class="large-10 cell">
-                <input type="date" name="paymentDate">
-            </div>
-
-            <div class="large-2 cell">
-                <label for="paidDate" class="text-right middle">Paid date</label>
-            </div>
-            <div class="large-10 cell">
-                <input type="date" name="paidDate">
-            </div>
-
-            <div class="large-2 cell">
-                <label for="due" class="text-right middle">Due</label>
-            </div>
-            <div class="large-10 cell">
-                <div class="input-group">
-                    <span class="input-group-label">$</span>
-                    <input class="input-group-field" name="due" type="number" placeholder="3549.00">
-                </div>
-            </div>
-
-            <div class="large-2 cell">
-                <label for="amount" class="text-right middle">Amount</label>
-            </div>
-            <div class="large-10 cell">
-                <div class="input-group">
-                    <span class="input-group-label">$</span>
-                    <input class="input-group-field" name="amount" type="number" placeholder="3549.00">
-                </div>
-            </div>
-
-            <div class="large-2 cell">
-                <label for="bankAccount" class="text-right middle">Bank account</label>
-            </div>
-            <div class="large-10 cell">
-                <input type="number" name="bankAccount">
-            </div>
-
-             <div class="large-12 cell">
-                <input type="button" class="button float-right" id="add-vehicle" name="add-vehicle" value="Add payment" />
-            </div>
-        </div>
-    </form>
-    <button class="close-button" data-close aria-label="Close modal" type="button">
-        <span aria-hidden="true">&times;</span>
-    </button>
-</div>
-
-<div class="reveal" id="employmentHistoryModal" data-reveal>
-    <div class="description">New employment history</div>
-    <form>
-        <div class="grid-x grid-padding-x align-middle">
-
-            <div class="large-2 cell align-middle">
-                <label for="employer" class="text-right middle">Employer</label>
-            </div>
-            <div class="large-10 cell">
-                <input type="text" name="employer">
-            </div>
-
-            <div class="large-2 cell">
-                <label for="title" class="text-right middle">Title</label>
-            </div>
-            <div class="large-10 cell">
-                <input type="text" name="title">
-            </div>
-
-            <div class="large-2 cell">
-                <label for="supervisor" class="text-right middle">Supervisor</label>
-            </div>
-            <div class="large-10 cell">
-                <input type="text" name="supervisor">
-            </div>
-
-            <div class="large-2 cell">
-                <label for="phone" class="text-right middle">Phone</label>
-            </div>
-            <div class="large-10 cell">
-                <input type="tel" name="phone">
-            </div>
-
-            <div class="large-2 cell">
-                <label for="address" class="text-right middle">Address</label>
-            </div>
-            <div class="large-10 cell">
-                <input type="tel" name="address">
-            </div>
-
-            <div class="large-2 cell">
-                <label for="startDate" class="text-right middle">Start date</label>
-            </div>
-            <div class="large-10 cell">
-                <input type="date" name="startDate">
-            </div>
-
-             <div class="large-12 cell">
-                <input type="button" class="button float-right" id="add-employment-history" name="add-employment-history" value="Add employment history" />
-            </div>
-        </div>
-    </form>
-
-    <button class="close-button" data-close aria-label="Close modal" type="button">
-        <span aria-hidden="true">&times;</span>
-    </button>
 </div>

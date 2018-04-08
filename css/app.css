@@ -5,12 +5,7 @@ html, body {
     margin: 0;
 }
 
-.dataTable {
-    padding-top:20px !important;
-}
-
 .table-button {
-/*   font-size: .5em !important;*/
     font-weight: bold !important;
     color:#1779ba;
 }
