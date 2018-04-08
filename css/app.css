@@ -5,15 +5,22 @@ html, body {
     margin: 0;
 }
 
-tr, td {
-    height: 20px !important;
-    padding-bottom: 0px !important;
-}
-.table-button {
-   font-size: .5em !important;
-    
+.dataTable {
+    padding-top:20px !important;
 }
 
+.table-button {
+/*   font-size: .5em !important;*/
+    font-weight: bold !important;
+    color:#1779ba;
+}
+.row {
+    margin-bottom:50px !important;
+}
+
+h5 {
+    padding-bottom: 0px !important;
+}
 form label {
     font-size: .85em !important;
 }
