@@ -1,18 +1,10 @@
 <?php
-    // Create connection
-    function connect_sql() {
-        $conn = new mysqli("localhost", "root", "", "WestsideAutoIncDB");
-        
-        // Check connection
-        if ($conn->error) {
-            die("Error: " . $conn->error);
-        }
-        return $conn;
-    }
-?>
+    $conn = new mysqli("localhost", "root", "", "WestsideAutoIncDB");
 
-<?php 
-    $conn = connect_sql();
+    // Check connection
+    if ($conn->error) {
+        die("Error: " . $conn->error);
+    }
 ?>
 
 <!DOCTYPE html>
@@ -38,13 +30,13 @@
             <div class="cell">
                 <ul class="menu align-right menu-hover-lines">
                     <li><a href="/">Home</a></li>
+                    <li><a href="buyer.php">Buyer</a></li>
                     <li class="active"><a href="purchase.php">Purchase</a></li>
+                    <li><a href="vehicle.php">Vehicle</a></li>
+                    <li><a href="warrantyitem.php">Warranty Item</a></li>
+                    <li><a href="salesperson.php">Salesperson</a></li>
                     <li><a href="sale.php">Sale</a></li>
                     <li><a href="customer.php">Customer</a></li>
-                    <li><a href="buyer.php">Buyer</a></li>
-                    <li><a href="salesperson.php">Salesperson</a></li>
-                    <li><a href="warrantyitem.php">Warranty Item</a></li>
-                    <li><a href="vehicle.php">Vehicle</a></li>
                 </ul>
             </div>
         </div>
@@ -97,20 +89,22 @@
                             
                             $numRepairs = $_POST['numRepairs'][$i];
                             for($j = $sumRepairs; $j < $sumRepairs + $numRepairs; $j++)
-                            {
-                                /*Repair*/
-                                $estCostCur = $_POST['estCost'][$j];
-                                $problemCur = $_POST['problem'][$j];   
-                                
-                                /*Insert into Repair*/
-                                $stmtRepair = $conn->prepare("INSERT INTO Repair (VehicleID, EstCost, Problem) VALUES ((SELECT MAX(VehicleID) AS VehicleID FROM Vehicle), ?, ?)");
-                                $stmtRepair->bind_param("ds", $estCostCur, $problemCur);
-                                $stmtRepair->execute();
-                            }
-                            $sumRepairs += $numRepairs;
+                                {
+                                    if(!empty($_POST['estCost'][$j]) && !empty($_POST['problem'][$j])) {
+                                        /*Repair*/
+                                        $estCostCur = $_POST['estCost'][$j];
+                                        $problemCur = $_POST['problem'][$j];   
+
+                                        /*Insert into Repair*/
+                                        $stmtRepair = $conn->prepare("INSERT INTO Repair (VehicleID, EstCost, Problem) VALUES ((SELECT MAX(VehicleID) AS VehicleID FROM Vehicle), ?, ?)");
+                                        $stmtRepair->bind_param("ds", $estCostCur, $problemCur);
+                                        $stmtRepair->execute();
+                                    }
+                                }
+                                $sumRepairs += $numRepairs;
                         }
                      
-                        if($stmtVehicle->affected_rows === -1 || $stmtPurchase->affected_rows === -1 || $stmtRepair->affected_rows === -1) {
+                        if($stmtVehicle->affected_rows === -1 || $stmtPurchase->affected_rows === -1 && isset($stmtRepair) && $stmtRepair->affected_rows === -1) {
                             echo '<div class="large-12 cell "><div data-closable class="callout alert-callout-border alert">
                             <strong>Boo!</strong> - It broke!
                             <button class="close-button" aria-label="Dismiss alert" type="button" data-close>
@@ -127,7 +121,8 @@
                             }
                         $stmtPurchase->close();
                         $stmtVehicle->close();
-                        $stmtRepair->close();
+                        if(isset($stmtRepair))
+                            $stmtRepair->close();
                     }
                 ?>
                 
@@ -416,7 +411,7 @@
                     var $lowButton = $("[id=addRepairButton]:eq(" + $lowButtonIndex + ")");
                     $lowButton.click(function(){
                         $repairRow = $('.repairTemplate:first').clone();
-                        $repairRow.clone().insertBefore( $lowButton );
+                        $repairRow.clone().insertBefore( $lowButton ).find("input,textarea").val("");
                     });
                 });
                 

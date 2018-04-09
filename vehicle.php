@@ -1,22 +1,14 @@
+<?php
+    $conn = new mysqli("localhost", "root", "", "WestsideAutoIncDB");
+
+    // Check connection
+    if ($conn->error) {
+        die("Error: " . $conn->error);
+    }
+?>
+
 <!DOCTYPE html>
 
-<?php
-    // Create connection
-    function connect_sql() {
-        $conn = new mysqli("localhost", "root", "", "WestsideAutoIncDB");
-        
-        // Check connection
-        if ($conn->error) {
-            die("Error: " . $conn->error);
-        }
-        return $conn;
-    }
-    
-?>
-
-<?php 
-    $conn = connect_sql();
-?>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
 
 	<head>
@@ -66,13 +58,13 @@
             <div class="cell">
                 <ul class="menu align-right menu-hover-lines">
                     <li><a href="/">Home</a></li>
+                    <li><a href="buyer.php">Buyer</a></li>
                     <li><a href="purchase.php">Purchase</a></li>
+                    <li class="active"><a href="vehicle.php">Vehicle</a></li>
+                    <li><a href="warrantyitem.php">Warranty Item</a></li>
+                    <li><a href="salesperson.php">Salesperson</a></li>
                     <li><a href="sale.php">Sale</a></li>
                     <li><a href="customer.php">Customer</a></li>
-                    <li><a href="buyer.php">Buyer</a></li>
-                    <li><a href="salesperson.php">Salesperson</a></li>
-                    <li><a href="warrantyitem.php">Warranty Item</a></li>
-                    <li class="active"><a href="vehicle.php">Vehicle</a></li>
                 </ul>
             </div>
         </div>

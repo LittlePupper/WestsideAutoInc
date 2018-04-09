@@ -1,18 +1,10 @@
 <?php
-    // Create connection
-    function connect_sql() {
-        $conn = new mysqli("localhost", "root", "", "WestsideAutoIncDB");
-        
-        // Check connection
-        if ($conn->error) {
-            die("Error: " . $conn->error);
-        }
-        return $conn;
-    }
-?>
+    $conn = new mysqli("localhost", "root", "", "WestsideAutoIncDB");
 
-<?php 
-    $conn = connect_sql();
+    // Check connection
+    if ($conn->error) {
+        die("Error: " . $conn->error);
+    }
 ?>
 
 <!DOCTYPE html>
@@ -38,18 +30,16 @@
             <div class="cell">
                 <ul class="menu align-right menu-hover-lines">
                     <li><a href="/">Home</a></li>
+                    <li><a href="buyer.php">Buyer</a></li>
                     <li><a href="purchase.php">Purchase</a></li>
+                    <li><a href="vehicle.php">Vehicle</a></li>
+                    <li><a href="warrantyitem.php">Warranty Item</a></li>
+                    <li class="active"><a href="salesperson.php">Salesperson</a></li>
                     <li><a href="sale.php">Sale</a></li>
                     <li><a href="customer.php">Customer</a></li>
-                    <li><a href="buyer.php">Buyer</a></li>
-                    <li class="active"><a href="salesperson.php">Salesperson</a></li>
-                    <li><a href="warrantyitem.php">Warranty Item</a></li>
-                    <li><a href="vehicle.php">Vehicle</a></li>
                 </ul>
             </div>
         </div>
-        
-
         
         <div class="form">
             <div class="grid-container">

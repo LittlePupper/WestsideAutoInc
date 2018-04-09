@@ -1,20 +1,13 @@
-<!DOCTYPE html>
 <?php
-    // Create connection
-    function connect_sql() {
-        $conn = new mysqli("localhost", "root", "", "WestsideAutoIncDB");
-        
-        // Check connection
-        if ($conn->error) {
-            die("Error: " . $conn->error);
-        }
-        return $conn;
+    $conn = new mysqli("localhost", "root", "", "WestsideAutoIncDB");
+
+    // Check connection
+    if ($conn->error) {
+        die("Error: " . $conn->error);
     }
 ?>
 
-<?php 
-    $conn = connect_sql();
-?>
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
 
@@ -39,12 +32,13 @@
             <div class="cell">
                 <ul class="menu align-right menu-hover-lines">
                     <li><a href="/">Home</a></li>
+                    <li><a href="buyer.php">Buyer</a></li>
                     <li><a href="purchase.php">Purchase</a></li>
+                    <li><a href="vehicle.php">Vehicle</a></li>
+                    <li><a href="warrantyitem.php">Warranty Item</a></li>
+                    <li><a href="salesperson.php">Salesperson</a></li>
                     <li class="active"><a href="sale.php">Sale</a></li>
                     <li><a href="customer.php">Customer</a></li>
-                    <li><a href="buyer.php">Buyer</a></li>
-                    <li><a href="salesperson.php">Salesperson</a></li>
-                    <li><a href="warrantyitem.php">Warranty Item</a></li>
                 </ul>
             </div>
         </div>
@@ -78,7 +72,7 @@
                     </div>
                         </fieldset>	
 				  <?php
-                    if(isset($_POST['finalize-customer'])){
+                    if(isset($_POST['submitSale'])){
                         $firstName = $_POST['firstName'];
                         $lastName = $_POST['lastName'];
 						$gender = $_POST['gender'];
@@ -89,11 +83,29 @@
 						$city = $_POST['city'];
 						$state = $_POST['state'];
 						$zip = $_POST['zip'];
+						$StartDate = $_POST['StartDate'];
+						$EndDate = $_POST['EndDate'];
+						$Cost = $_POST['WarrantyCost'];
+						$Deductible = $_POST['Deductible'];
+						$Commission = $_POST['Commission'];
+						$DownPayment = $_POST['DownPayment'];
+						$FinanceAmount = $_POST['FinanceAmount'];
+						$TotalDue = $_POST['TotalDue'];
 
                         $stmt = $conn->prepare("INSERT INTO Customer (FirstName, LastName, Gender, Birthday, TaxID, Phone, Address, City, State, Zip) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
                         $stmt->bind_param("ssssiissss", $firstName, $lastName, $gender, $birthday, $taxID, $phone, $address, $city, $state, $zip);
-
+						$stmt->execute();
+						$stmt->close();
+						
+						$stmt = $conn->prepare("INSERT INTO Coverage (StartDate, EndDate, Cost, Deductible) VALUES(?, ?, ?, ?)");
+						$stmt->bind_param("ssdd", $StartDate, $EndDate, $Cost, $Deductible);
                         $stmt->execute();
+						$stmt->close();
+						
+						$stmt = $conn->prepare("INSERT INTO Sale (Commission, DownPayment, FinanceAmount, TotalDue) VALUES(?, ?, ?, ?)");
+						$stmt->bind_param("dddd", $Commission, $DownPayment, $FinanceAmount, $TotalDue);
+                        $stmt->execute();						
+						
                         if($stmt->affected_rows === -1) {
                             echo '<div class="large-12 cell "><div data-closable class="callout alert-callout-border alert">
                             <strong>Boo!</strong> - It broke!
@@ -110,16 +122,22 @@
                         </div></div>';
                             }
 
-                        $stmt->close();
+                    $stmt->close();    
                     }
+					
                 ?>
                 
                 <!--CUSTOMER INFORMATION-->
                 
                 <form class="data" action="sale.php" method="post">
+					
                     <div class="grid-x grid-padding-x align-middle">    
                         <div class="large-12 cell">
                             <hr>
+                        </div>
+                        
+                        <div class="large-12 cell">
+                            <h5> Customer information</h5>
                         </div>
 
                         <div class='large-1 cell'>
@@ -163,7 +181,8 @@
                         </div>
                         <div class='large-5 cell'>
                             <input type='date' 
-                                   max='2999-12-31' 
+                                   min='1900-01-01'
+                                   max='<?php echo date("Y"); ?>-<?php echo date("m"); ?>-<?php echo date("d"); ?>'
                                    name='birthday' 
                                    required>
                         </div>
@@ -240,14 +259,17 @@
                                    placeholder='T1K4G3'
                                    required>
                         </div>
-                        <div class="large-12 cell">
-                            <hr>
-                        </div>
                     </div>
                     
                     <!--TABLE OF VEHICLES-->
                     
                     <div class="grid-x grid-padding-x">
+                        <div class="large-12 cell">
+                            <hr>
+                        </div>
+                        <div class="large-12 cell">
+                            <h5>Vehicle selection</h5>
+                        </div>
                         <div class="large-12 cell">
                             <table id="customerTable" class="display">
                                 <thead>
@@ -265,7 +287,7 @@
                                 </thead>
                                 <tbody>
                                     <?php 
-                                        $sql = "SELECT VehicleID, Make, Model, Year, Color, Mileage, Style, InteriorColor, ListingPrice FROM Vehicle";
+                                        $sql = "SELECT VehicleID, Make, Model, Year, Color, Mileage, Style, InteriorColor, IsSold, ListingPrice FROM Vehicle WHERE IsSold = 0 AND ListingPrice IS NOT NULL";
                                         $result = mysqli_query($conn, $sql);
                                         while ($row = $result->fetch_assoc()) {
                                             $Make = $row['Make'];
@@ -277,17 +299,16 @@
                                             $InteriorColor = $row['InteriorColor'];
                                             $ListingPrice = $row['ListingPrice'];
                                             echo '<tr>';
-                                            echo '<td>'.$Year.'</td>';
                                             echo '<td>'.$Make.'</td>';
                                             echo '<td>'.$Model.'</td>';
+                                            echo '<td>'.$Year.'</td>';
                                             echo '<td>'.$Color.'</td>';
                                             echo '<td>'.$Mileage.'</td>';
                                             echo '<td>'.$Style.'</td>';
                                             echo '<td>'.$InteriorColor.'</td>';
-                                            echo '<td>'.$ListingPrice.'</td>';	
-                                            echo '<td><input type="radio" id="'.$ListingPrice.'" name="vehicleChoice"></td>';	
+                                            echo '<td>$'.$ListingPrice.'</td>';		
+                                            echo '<td><input type="radio" id="ListingPrice" value="'. $ListingPrice.'" name="ListingPrice"></td>';	
                                             echo '</tr>';
-
                                         }
                                     ?>
                                 </tbody>
@@ -319,29 +340,52 @@
                             <label for="year" class="text-right middle">Cost</label>
                         </div>
                         <div class="large-5 cell">
-                            <input type="number" name="Cost" placeholder="$0000">
+                            <div class="input-group">
+                                <span class="input-group-label">$</span>
+                                <input class="input-group-field" 
+                                       type="number" 
+                                       oninput='javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);'
+                                       maxlength='9'
+                                       name="WarrantyCost" 
+                                       id="WarrantyCost" 
+                                       placeholder="----.--">
+                            </div>
                         </div>
 
                         <div class="large-1 cell">
-                            <label for="make" class="text-right middle">Start Date</label>
+                            <label for="make" class="text-right middle">Start date</label>
                         </div>
                         <div class="large-5 cell">
-                            <input type="date" max="2999-12-31" name="StartDate">
+                            <input type="date" 
+                                   min="1900-01-01"
+                                   max="<?php echo date("Y"); ?>-<?php echo date("m"); ?>-<?php echo date("d"); ?>"
+                                   name="StartDate">
                         </div>
 
                         <div class="large-1 cell">
-                            <label for="model" class="text-right middle">End Date</label>
+                            <label for="model" class="text-right middle">End date</label>
                         </div>
                         <div class="large-5 cell">
-                            <input type="date" max="2999-12-31" name="EndDate">
+                            <input type="date"
+                                   min="1900-01-01"
+                                   max="<?php echo date("Y"); ?>-<?php echo date("m"); ?>-<?php echo date("d"); ?>"
+                                   name="EndDate">
                         </div>
 
                         <div class="large-1 cell">
-                            <label for="style" class="text-right middle">Deductable</label>
+                            <label for="style" class="text-right middle">Deductible</label>
                         </div>
 
                         <div class="large-5 cell">
-                            <input type="number" name="Deductable" placeholder="$0000">
+                            <div class="input-group">
+                                <span class="input-group-label">$</span>
+                                <input class="input-group-field"
+                                       type="number"
+                                       name="Deductible"
+                                       oninput='javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);'
+                                       maxlength='9'
+                                       placeholder="----.--">
+                            </div>
                         </div>
                         
                         <div class="large-12 cell">
@@ -355,33 +399,63 @@
                             <hr>
                         </div>                
                         <div class="large-7 cell">
-                            <label for="Commission" class="text-right middle">Commission:</label>
+                            <label for="Commission" class="text-right middle">Commission</label>
                         </div>
                         <div class="large-5 cell">
-                            <input type="number" name="Commission" placeholder="$1000.00"><br>
+                            <div class="input-group">
+                                <span class="input-group-label">$</span>
+                                <input class="input-group-field" 
+                                       type="number" 
+                                       oninput='javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);'
+                                       maxlength='9'
+                                       name="Commission" 
+                                       placeholder="----.--"
+                                       required>
+                            </div>
                         </div>
                         
                         <div class="large-7 cell">
-                            <label for="DownPayment" class="text-right middle">Down Payment:</label>
+                            <label for="DownPayment" class="text-right middle">Down payment</label>
                         </div>
                         <div class="large-5 cell">
-                            <input type="number" name="DownPayment" placeholder="$0000"><br>
+                            <div class="input-group">
+                                <span class="input-group-label">$</span>
+                                <input class="input-group-field" 
+                                       type="number" 
+                                       name="DownPayment" 
+                                       oninput='javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);'
+                                       maxlength='9'
+                                       placeholder="----.--" 
+                                       id="DownPayment" 
+                                       required>
+                            </div>
                         </div>
 
                         <div class="large-7 cell">
-                            <label for="TotalDue" class="text-right middle">Finance Amount:</label>
+                            <label for="FinanceAmount" class="text-right middle">Finance amount</label>
                         </div>
                         <div class="large-5 cell">
-                            <input type="number" name="Finance Amount" placeholder="$0000"><br>
+                            <div class="input-group">
+                                <span class="input-group-label">$</span>
+                                <input class="input-group-field" 
+                                       type="number"
+                                       name="FinanceAmount"
+                                       oninput='javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);'
+                                       maxlength='9'
+                                       placeholder="----.--"
+                                       required>
+                            </div>
                         </div>
 
                         <div class="large-7 cell">
                             <label for="TotalDue" class="text-right middle">Total Due:</label>
                         </div>
                         <div class="large-5 cell">
-                            <input type="number" name="TotalDue" placeholder="$0000" disabled><br>
+                            <div class="input-group">
+                                <span class="input-group-label">$</span>
+                                <input class="input-group-field" type="number" name="TotalDue" id="TotalDue" placeholder="----.--" readonly>
+                            </div>
                         </div>
-                        
                         <div class="large 12 cell">
                             <input type="submit" class="button float-right" id="submitSale" name="submitSale" value="Submit sale">
                         </div>
@@ -421,6 +495,29 @@
             $(document).ready( function () {
                 $('#customerTable').DataTable();
             });
+				var WarrantyCost = document.getElementById('WarrantyCost'),
+				ListingPrice = document.getElementById('ListingPrice'),
+				DownPayment = document.getElementById('DownPayment'),
+				TotalDue = document.getElementById('TotalDue');
+
+				function changeTotal()
+				{
+					var result = parseInt(WarrantyCost.value);  
+					var result2 = parseInt(ListingPrice.value);
+					var result3 = parseInt(DownPayment.value);
+					TotalDue.value = result + result2 - result3;
+					console.log(TotalDue.value);
+				}
+				
+				WarrantyCost.onchange = function(){	
+					changeTotal();
+				};
+				
+				DownPayment.onchange = function(){	
+					changeTotal();
+				};
+		
+		
 		</script>
     
 	</body>
