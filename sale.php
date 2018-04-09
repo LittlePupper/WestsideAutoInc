@@ -290,6 +290,7 @@
                                         $sql = "SELECT VehicleID, Make, Model, Year, Color, Mileage, Style, InteriorColor, IsSold, ListingPrice FROM Vehicle WHERE IsSold = 0 AND ListingPrice IS NOT NULL";
                                         $result = mysqli_query($conn, $sql);
                                         while ($row = $result->fetch_assoc()) {
+                                            $VehicleID = $row['VehicleID'];
                                             $Make = $row['Make'];
                                             $Model= $row['Model'];
                                             $Year = $row['Year'];
@@ -307,7 +308,7 @@
                                             echo '<td>'.$Style.'</td>';
                                             echo '<td>'.$InteriorColor.'</td>';
                                             echo '<td>$'.$ListingPrice.'</td>';		
-                                            echo '<td><input type="radio" id="ListingPrice" value="'. $ListingPrice.'" name="ListingPrice"></td>';	
+                                            echo '<td><input type="radio" id="VehicleID" value="'. $VehicleID.',' . $ListingPrice . '" name="VehicleID" onchange="changeTotal()"></td>';	
                                             echo '</tr>';
                                         }
                                     ?>
@@ -318,7 +319,7 @@
                     
                     <!--WARRANTY-->
                     
-                    <div class="grid-x grid-padding-x align-middle"> 
+                    <div class="warrantyTemplate grid-x grid-padding-x align-middle"> 
                         <div class="large-1 cell">
                             <label for="WarrantyItem" class="text-right middle">Warranty type</label>
                         </div>
@@ -346,6 +347,7 @@
                                        type="number" 
                                        oninput='javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);'
                                        maxlength='9'
+                                       onchange="changeTotal()"
                                        name="WarrantyCost" 
                                        id="WarrantyCost" 
                                        placeholder="----.--">
@@ -388,11 +390,12 @@
                             </div>
                         </div>
                         
-                        <div class="large-12 cell">
-                            <input type="button" class="button float-right" id="add-problem" name="add-vehicle" value="Add another warranty" />
-                        </div>
                     </div>  
-                    
+                    <div id="addWarrantyDiv" class ="grid-x grid-padding-x">    
+                        <div class="large-12 cell">
+                            <input type="button" class="button float-right" id="addWarrantyButton" name="addWarrantyButton" value="Add another warranty" />
+                        </div>
+                    </div>
 
                     <div class="finalizeTemplate grid-x grid-padding-x"> 
                         <div class="large-12 cell">
@@ -406,10 +409,12 @@
                                 <span class="input-group-label">$</span>
                                 <input class="input-group-field" 
                                        type="number" 
+                                       name="Commission" 
                                        oninput='javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);'
                                        maxlength='9'
-                                       name="Commission" 
+                                       onchange="changeTotal()"
                                        placeholder="----.--"
+                                       id="Commission"
                                        required>
                             </div>
                         </div>
@@ -425,6 +430,7 @@
                                        name="DownPayment" 
                                        oninput='javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);'
                                        maxlength='9'
+                                       onchange="changeTotal()"
                                        placeholder="----.--" 
                                        id="DownPayment" 
                                        required>
@@ -470,16 +476,12 @@
 		<script type="text/javascript" src="js/vendor/jquery.js"></script>
         <script type="text/javascript" >
             jQuery(function($){
-                var $buttonProblem = $('#add-problem'),
-                    $rowProblem = $('.problem-group').clone(),
-                    $buttonVehicle = $('#add-vehicle'),
-                    $rowVehicle = $('.vehicle-group');
+                var $warrantyButton = $('#addWarrantyButton'),
+                    $warrantyDiv = $('#addWarrantyDiv'),
+                    $warrantyRow = $('.warrantyTemplate:first').clone();
 
-                $buttonProblem.click(function(){
-                    $rowProblem.clone().insertBefore( $buttonProblem );
-                });
-                $buttonVehicle.click(function() {
-                   $rowVehicle.clone().insertBefore( $buttonVehicle); 
+                $warrantyButton.click(function(){
+                    $warrantyRow.clone().insertBefore( $warrantyDiv ).find("input").val("");
                 });
             });
         </script>
@@ -495,29 +497,32 @@
             $(document).ready( function () {
                 $('#customerTable').DataTable();
             });
-				var WarrantyCost = document.getElementById('WarrantyCost'),
-				ListingPrice = document.getElementById('ListingPrice'),
-				DownPayment = document.getElementById('DownPayment'),
-				TotalDue = document.getElementById('TotalDue');
+               
+            var WarrantyCost = document.getElementById('WarrantyCost'),
+                Commission = document.getElementById('Commission'),
+                DownPayment = document.getElementById('DownPayment'),
+                radios = document.getElementsByName('VehicleID'),
+                TotalCost = 0;
 
-				function changeTotal()
-				{
-					var result = parseInt(WarrantyCost.value);  
-					var result2 = parseInt(ListingPrice.value);
-					var result3 = parseInt(DownPayment.value);
-					TotalDue.value = result + result2 - result3;
-					console.log(TotalDue.value);
-				}
-				
-				WarrantyCost.onchange = function(){	
-					changeTotal();
-				};
-				
-				DownPayment.onchange = function(){	
-					changeTotal();
-				};
-		
-		
+            function changeTotal()
+            {
+                var VehiclePrice;
+                for( i = 0; i < radios.length; i++ ) {
+                    if( radios[i].checked ) {
+                        VehiclePrice = radios[i].value.split(',');
+                    }
+                }
+                if(Commission !== undefined)
+                    TotalCost+=parseFloat(Commission.value);
+                if(WarrantyCost !== undefined)
+                    TotalCost+=parseFloat(WarrantyCost.value);  
+                if(radios !== undefined)
+                    TotalCost+=parseFloat(VehiclePrice[1]);
+                if(DownPayment !== undefined)
+                    TotalCost+=parseFloat(DownPayment.value);
+                console.log(typeof TotalCost);
+                document.getElementById('TotalDue').value = parseFloat(TotalCost);
+            }		
 		</script>
     
 	</body>
