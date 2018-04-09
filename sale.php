@@ -59,7 +59,7 @@
                                 $sql = "SELECT SalespersonID, FirstName, LastName FROM Salesperson ORDER BY LastName";
                                 $result = mysqli_query($conn, $sql);
 
-                                echo "<select name='buyerID'>";
+                                echo "<select id='salespersonID' name='buyerID'>";
                                 while ($row = $result->fetch_assoc()) {
                                     $SalespersonID = $row['SalespersonID'];
                                     $FirstName = $row['FirstName'];
@@ -73,6 +73,8 @@
                         </fieldset>	
 				  <?php
                     if(isset($_POST['submitSale'])){
+                        
+                        $vehicleID = $_POST['postVehicleID'];
                         $firstName = $_POST['firstName'];
                         $lastName = $_POST['lastName'];
 						$gender = $_POST['gender'];
@@ -83,7 +85,7 @@
 						$city = $_POST['city'];
 						$state = $_POST['state'];
 						$zip = $_POST['zip'];
-						$StartDate = $_POST['StartDate'];
+                        $date = date('Y-m-d');
 						$EndDate = $_POST['EndDate'];
 						$Cost = $_POST['WarrantyCost'];
 						$Deductible = $_POST['Deductible'];
@@ -91,20 +93,29 @@
 						$DownPayment = $_POST['DownPayment'];
 						$FinanceAmount = $_POST['FinanceAmount'];
 						$TotalDue = $_POST['TotalDue'];
-
+                        $postSalesmanID = $_POST['postSalesmanID'];
+                        
+                        
                         $stmt = $conn->prepare("INSERT INTO Customer (FirstName, LastName, Gender, Birthday, TaxID, Phone, Address, City, State, Zip) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
                         $stmt->bind_param("ssssiissss", $firstName, $lastName, $gender, $birthday, $taxID, $phone, $address, $city, $state, $zip);
 						$stmt->execute();
 						$stmt->close();
-						
-						$stmt = $conn->prepare("INSERT INTO Coverage (StartDate, EndDate, Cost, Deductible) VALUES(?, ?, ?, ?)");
-						$stmt->bind_param("ssdd", $StartDate, $EndDate, $Cost, $Deductible);
+                        
+						$stmt = $conn->prepare("INSERT INTO Sale (CustomerID, VehicleID, SalespersonID, Commission, DownPayment, FinanceAmount, TotalDue, Date) VALUES((SELECT MAX(CustomerID) AS CustomerID FROM Customer), ?, ?, ?, ?, ?, ?, ?)");
+						$stmt->bind_param("iidddds", $vehicleID, $postSalesmanID, $Commission, $DownPayment, $FinanceAmount, $TotalDue, $date);
+                        $stmt->execute();						      
+						if ($stmt->execute()) { 
+                           echo "success";
+                        } else {
+                           echo $conn->error;
+                        }
+                        $stmt->close();
+
+						$stmt = $conn->prepare("INSERT INTO Coverage (SaleID, EndDate, Cost, Deductible) VALUES((SELECT MAX(SaleID) AS SaleID FROM Sale), ?, ?, ?)");
+						$stmt->bind_param("sdd", $EndDate, $Cost, $Deductible);
                         $stmt->execute();
-						$stmt->close();
-						
-						$stmt = $conn->prepare("INSERT INTO Sale (Commission, DownPayment, FinanceAmount, TotalDue) VALUES(?, ?, ?, ?)");
-						$stmt->bind_param("dddd", $Commission, $DownPayment, $FinanceAmount, $TotalDue);
-                        $stmt->execute();						
+                        
+                        echo $_POST['postVehicleID'];
 						
                         if($stmt->affected_rows === -1) {
                             echo '<div class="large-12 cell "><div data-closable class="callout alert-callout-border alert">
@@ -129,7 +140,7 @@
                 
                 <!--CUSTOMER INFORMATION-->
                 
-                <form class="data" action="sale.php" method="post">
+                <form class="data" action="sale.php" method="post" onsubmit="addParams()">
 					
                     <div class="grid-x grid-padding-x align-middle">    
                         <div class="large-12 cell">
@@ -462,7 +473,7 @@
                                 <input class="input-group-field" type="number" name="TotalDue" id="TotalDue" placeholder="----.--" readonly>
                             </div>
                         </div>
-                        <div class="large 12 cell">
+                        <div class="large 12 cell" id="bottom">
                             <input type="submit" class="button float-right" id="submitSale" name="submitSale" value="Submit sale">
                         </div>
                     </div><!--/finalizeTemplate-->
@@ -501,26 +512,53 @@
             var WarrantyCost = document.getElementById('WarrantyCost'),
                 Commission = document.getElementById('Commission'),
                 DownPayment = document.getElementById('DownPayment'),
-                radios = document.getElementsByName('VehicleID'),
-                TotalCost = 0;
+                radios = document.getElementsByName('VehicleID');
 
+            function addParams()
+            {
+                    var para = document.createElement("input");
+                    para.setAttribute("name","postVehicleID");
+                    para.setAttribute("type","hidden");
+                
+                    var VehicleID;
+                    for( i = 0; i < radios.length; i++ ) {
+                        if( radios[i].checked ) {
+                            VehicleID = radios[i].value.split(',');
+                        }
+                    }
+                
+                    para.setAttribute("value", VehicleID[0]);
+                    document.getElementById("bottom").appendChild(para);
+                
+                    var para2 = document.createElement("input");
+                    para2.setAttribute("name","postSalesmanID");
+                    para2.setAttribute("type","hidden");
+                
+                    var id = document.getElementById("salespersonID");
+                    var val = id.options[id.selectedIndex].value;
+                
+                    para2.setAttribute("value", val);
+                    document.getElementById("bottom").appendChild(para2);
+            }
+            
             function changeTotal()
             {
+                TotalCost = 0;
                 var VehiclePrice;
                 for( i = 0; i < radios.length; i++ ) {
                     if( radios[i].checked ) {
                         VehiclePrice = radios[i].value.split(',');
                     }
                 }
-                if(Commission !== undefined)
+                
+                if(Commission.value !== "")
                     TotalCost+=parseFloat(Commission.value);
-                if(WarrantyCost !== undefined)
-                    TotalCost+=parseFloat(WarrantyCost.value);  
-                if(radios !== undefined)
+                if(WarrantyCost.value !== "")
+                    TotalCost+=parseFloat(WarrantyCost.value);
+                if(VehiclePrice !== undefined)
                     TotalCost+=parseFloat(VehiclePrice[1]);
-                if(DownPayment !== undefined)
-                    TotalCost+=parseFloat(DownPayment.value);
-                console.log(typeof TotalCost);
+                if(DownPayment.value !== "")
+                    TotalCost-=parseFloat(DownPayment.value);
                 document.getElementById('TotalDue').value = parseFloat(TotalCost);
             }		
 		</script>

@@ -45,7 +45,7 @@ CREATE TABLE Customer (
 
 CREATE TABLE Payment (
 	PaymentID		INT(6) AUTO_INCREMENT,
-	CustomerID		INT(6),
+	CustomerID		INT(6) NOT NULL,
 	ExpectedDate	DATE NOT NULL,
 	PaidDate		DATE NOT NULL,
 	AmountDue		FLOAT(8,2) NOT NULL,
@@ -57,7 +57,7 @@ CREATE TABLE Payment (
 
 CREATE TABLE EmploymentHistory (
 	EmploymentHistoryID	INT(6) AUTO_INCREMENT,
-	CustomerID			INT(6),
+	CustomerID			INT(6) NOT NULL,
 	Employer 			VARCHAR(50) NOT NULL,
 	Title				VARCHAR(50) NOT NULL,
 	Supervisor			VARCHAR(50) NOT NULL,
@@ -70,7 +70,7 @@ CREATE TABLE EmploymentHistory (
 
 CREATE TABLE Purchase (
 	PurchaseID	INT(6) AUTO_INCREMENT,
-	BuyerID		INT(6),
+	BuyerID		INT(6) NOT NULL,
 	Date 		DATE NOT NULL,
 	Location	VARCHAR(50) NOT NULL,
 	Seller		VARCHAR(50) NOT NULL,
@@ -81,7 +81,7 @@ CREATE TABLE Purchase (
 
 CREATE TABLE Vehicle (
 	VehicleID		INT(6) AUTO_INCREMENT,
-	PurchaseID		INT(6),
+	PurchaseID		INT(6) NOT NULL,
 	Make			VARCHAR(50) NOT NULL,
 	Model			VARCHAR(50) NOT NULL,
 	Year			INT(4) NOT NULL,
@@ -100,9 +100,9 @@ CREATE TABLE Vehicle (
 
 CREATE TABLE Sale (
 	SaleID 			INT(6) AUTO_INCREMENT,
-	SalespersonID	INT(6),
-	CustomerID		INT(6),
-	VehicleID		INT(6),
+	SalespersonID	INT(6) NOT NULL,
+	CustomerID		INT(6) NOT NULL,
+	VehicleID		INT(6) NOT NULL,
 	Date 			DATE NOT NULL,
 	TotalDue		FLOAT(8,2) NOT NULL,
 	DownPayment		FLOAT(8,2) NOT NULL,
@@ -117,7 +117,7 @@ CREATE TABLE Sale (
 CREATE TABLE Coverage (
 	CoverageID		INT(6) AUTO_INCREMENT,
 	WarrantyItemID	INT(6) NOT NULL,
-	SaleID 		INT(6),
+	SaleID 			INT(6) NOT NULL,
 	EndDate			DATE NOT NULL,
 	Cost 			FLOAT(8,2) NOT NULL,
 	Deductible		FLOAT(8,2) NOT NULL,
