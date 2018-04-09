@@ -118,7 +118,6 @@ CREATE TABLE Coverage (
 	CoverageID		INT(6) AUTO_INCREMENT,
 	WarrantyItemID	INT(6) NOT NULL,
 	SaleID 		INT(6),
-	StartDate		DATE NOT NULL,
 	EndDate			DATE NOT NULL,
 	Cost 			FLOAT(8,2) NOT NULL,
 	Deductible		FLOAT(8,2) NOT NULL,
