@@ -49,28 +49,6 @@
                     <div class="title">Sell a vehicle</div>
                     <div class="description">Use this form when selling a vehicle to a customer.</div>
                 </div>
-				 <fieldset>
-                    <div class="grid-x grid-padding-x ">
-                        <div class="large-1 cell">
-                            <label for="middle-label" class="text-right middle">Salesperson</label>
-                        </div>
-                        <div class="large-5 cell">
-                            <?php 
-                                $sql = "SELECT SalespersonID, FirstName, LastName FROM Salesperson ORDER BY LastName";
-                                $result = mysqli_query($conn, $sql);
-
-                                echo "<select id='salespersonID' name='buyerID'>";
-                                while ($row = $result->fetch_assoc()) {
-                                    $SalespersonID = $row['SalespersonID'];
-                                    $FirstName = $row['FirstName'];
-                                    $LastName = $row['LastName'];
-                                    echo '<option value="'.$SalespersonID.'">' .$LastName.', ' .$FirstName. '</option>';
-                                }
-                                echo "</select>";
-                            ?>
-                        </div>
-                    </div>
-                        </fieldset>	
 				  <?php
                     if(isset($_POST['submitSale'])){
                         
@@ -143,6 +121,29 @@
                     }
 					
                 ?>
+                
+                <fieldset>
+                <div class="grid-x grid-padding-x ">
+                    <div class="large-1 cell">
+                        <label for="middle-label" class="text-right middle">Salesperson</label>
+                    </div>
+                    <div class="large-5 cell">
+                        <?php 
+                            $sql = "SELECT SalespersonID, FirstName, LastName FROM Salesperson ORDER BY LastName";
+                            $result = mysqli_query($conn, $sql);
+
+                            echo "<select id='salespersonID' name='buyerID'>";
+                            while ($row = $result->fetch_assoc()) {
+                                $SalespersonID = $row['SalespersonID'];
+                                $FirstName = $row['FirstName'];
+                                $LastName = $row['LastName'];
+                                echo '<option value="'.$SalespersonID.'">' .$LastName.', ' .$FirstName. '</option>';
+                            }
+                            echo "</select>";
+                        ?>
+                    </div>
+                </div>
+                    </fieldset>
                 
                 <!--CUSTOMER INFORMATION-->
                 
