@@ -8,7 +8,7 @@
     /* CUSTOMER INPUTS BASED ON THE SELECTION FROM THE CUSTOMER TABLE */
 
     while($row = mysqli_fetch_array($result)) {
-        echo "<form class='data' action='vehicle.php' method='post'>
+        echo "<form class='data' action='vehicle.php?q=" . $q . "' method='post'>
             <div class='grid-x grid-padding-x align-middle'>    
                 <div class='large-12 cell'>
                     <hr>
@@ -246,7 +246,7 @@
     $repairNo = 1;
 
     while($repairrow = mysqli_fetch_array($repairresult)) {
-        echo "<form class='data' action='vehicle.php' method='post'>
+        echo "<form class='data' action='vehicle.php?q=" . $q . "' method='post'>
                 <div class='repairTemplate grid-x grid-padding-x align-middle'>
                     <div class='large-12 cell'>
                         <hr>
@@ -309,6 +309,100 @@
             </form>";
         $repairNo++;
     }
+    
+    $warrantysql="SELECT * FROM coverage NATURAL JOIN warrantyitem WHERE SaleID = (SELECT SaleID FROM sale WHERE VehicleID = ".$q.")";
+    if (!$warrantyresult = mysqli_query($conn, $warrantysql))
+      {
+        echo("Error description: " . mysqli_error($conn));
+      }
+
+    $warrantyNo = 1;
+
+    while($warrantyrow = mysqli_fetch_array($warrantyresult)) {
+        echo "<form class='data' action='vehicle.php' method='post'>
+                <div class='warrantyTemplate grid-x grid-padding-x align-middle'>
+                    <div class='large-12 cell'>
+                        <hr>
+                    </div> 
+
+                    <div class='large-6 cell'>
+                        <h5>Warranty #" . $warrantyNo . "<h5>
+                    </div>
+
+                    <div class='large-6 cell'>
+                        <input type='hidden' id='q' name='q' value='" . $q . "'>
+                        <input type='hidden' id='r' name='r' value='" . $warrantyrow['CoverageID'] . "'>
+                     <!--    <input type='submit' class='button float-right' id='updateWarranty' name='updateWarranty' value='Update repair #" . $warrantyNo . "'> -->
+                    </div>
+
+                    <div class='large-1 cell'>
+                        <label for='type' class='text-right middle'>Type</label>
+                    </div>
+                    <div class='large-5 cell'>
+                        <div class='input-group'>
+                            <input class='input-group-field' 
+                                   name='type' 
+                                   type='text' 
+                                   value='" . $warrantyrow['Type'] . "'
+                                   placeholder='--' 
+                                   readonly>
+                        </div>
+                    </div>
+                    <div class='large-1 cell'>
+                        <label for='enddate' class='text-right middle'>End date</label>
+                    </div>
+                    <div class='large-5 cell'>
+                        <div class='input-group'>
+                            <input class='input-group-field' 
+                                   name='enddate' 
+                                   type='date' 
+                                   value='" . $warrantyrow['EndDate'] . "'
+                                   placeholder='--' 
+                                   readonly>
+                        </div>
+                    </div>
+                    <div class='large-1 cell'>
+                        <label for='cost' class='text-right middle'>Cost</label>
+                    </div>
+                    <div class='large-5 cell'>
+                        <div class='input-group'>
+                            <span class='input-group-label'>$</span>
+                            <input class='input-group-field' 
+                                   name='cost' 
+                                   type='number' 
+                                   value='" . $warrantyrow['Cost'] . "'
+                                   placeholder='--' 
+                                   readonly>
+                        </div>
+                    </div>
+                    
+                    <div class='large-1 cell'>
+                        <label for='deductible' class='text-right middle'>Deductible</label>
+                    </div>
+                    <div class='large-5 cell'>
+                        <div class='input-group'>
+                            <span class='input-group-label'>$</span>
+                            <input class='input-group-field' 
+                                   name='deductible' 
+                                   type='number' 
+                                   value='" . $warrantyrow['Deductible'] . "'
+                                   placeholder='--' 
+                                   readonly>
+                        </div>
+                    </div>
+                    <div class='large-1 cell'>
+                        <label for='description' class='text-right middle'>Description</label>
+                    </div>                        
+                    <div class='large-11 cell'>
+                        <textarea name='description' 
+                                  maxlength='200'
+                                  readonly>" . $warrantyrow['Description'] . "</textarea>
+                    </div>
+                </div>
+            </form>";
+        $warrantyNo++;
+    }
+    
 
     mysqli_close($conn);
 ?>               

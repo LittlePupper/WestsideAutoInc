@@ -8,7 +8,7 @@
     /* CUSTOMER INPUTS BASED ON THE SELECTION FROM THE CUSTOMER TABLE */
 
     while($row = mysqli_fetch_array($result)) {
-        echo "<form class='data' action='customer.php' method='post'>
+        echo "<form class='data' action='customer.php?q=" . $q . "' method='post'>
             <div class='grid-x grid-padding-x align-middle'>    
                 <div class='large-12 cell'>
                     <hr>

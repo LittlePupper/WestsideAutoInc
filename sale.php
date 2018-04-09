@@ -94,30 +94,33 @@
 						$FinanceAmount = $_POST['FinanceAmount'];
 						$TotalDue = $_POST['TotalDue'];
                         $postSalesmanID = $_POST['postSalesmanID'];
+                        $warrantyItemID = $_POST['WarrantyItem'];
                         
-                        
-                        $stmt = $conn->prepare("INSERT INTO Customer (FirstName, LastName, Gender, Birthday, TaxID, Phone, Address, City, State, Zip) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-                        $stmt->bind_param("ssssiissss", $firstName, $lastName, $gender, $birthday, $taxID, $phone, $address, $city, $state, $zip);
-						$stmt->execute();
-						$stmt->close();
-                        
-						$stmt = $conn->prepare("INSERT INTO Sale (CustomerID, VehicleID, SalespersonID, Commission, DownPayment, FinanceAmount, TotalDue, Date) VALUES((SELECT MAX(CustomerID) AS CustomerID FROM Customer), ?, ?, ?, ?, ?, ?, ?)");
-						$stmt->bind_param("iidddds", $vehicleID, $postSalesmanID, $Commission, $DownPayment, $FinanceAmount, $TotalDue, $date);
-                        $stmt->execute();						      
-						if ($stmt->execute()) { 
-                           echo "success";
-                        } else {
-                           echo $conn->error;
-                        }
-                        $stmt->close();
-
-						$stmt = $conn->prepare("INSERT INTO Coverage (SaleID, EndDate, Cost, Deductible) VALUES((SELECT MAX(SaleID) AS SaleID FROM Sale), ?, ?, ?)");
-						$stmt->bind_param("sdd", $EndDate, $Cost, $Deductible);
-                        $stmt->execute();
-                        
-                        echo $_POST['postVehicleID'];
+                        $stmtCustomer = $conn->prepare("INSERT INTO Customer (FirstName, LastName, Gender, Birthday, TaxID, Phone, Address, City, State, Zip) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                        $stmtCustomer->bind_param("ssssiissss", $firstName, $lastName, $gender, $birthday, $taxID, $phone, $address, $city, $state, $zip);
+						$stmtCustomer->execute();
 						
-                        if($stmt->affected_rows === -1) {
+                        
+						$stmtSale = $conn->prepare("INSERT INTO Sale (CustomerID, VehicleID, SalespersonID, Commission, DownPayment, FinanceAmount, TotalDue, Date) VALUES((SELECT MAX(CustomerID) AS CustomerID FROM Customer), ?, ?, ?, ?, ?, ?, ?)");
+						$stmtSale->bind_param("iidddds", $vehicleID, $postSalesmanID, $Commission, $DownPayment, $FinanceAmount, $TotalDue, $date);
+                        $stmtSale->execute();						      
+                        
+                        for ($i = 0; $i < count($_POST['WarrantyItem']); $i++) 
+                        {
+                            if( $Deductible[$i] != '' && $Cost[$i] != '' && $EndDate[$i] != '')
+                            {
+                                $warrantyItemCur = $warrantyItemID[$i];
+                                $EndDateCur = $EndDate[$i];
+                                $CostCur = $Cost[$i];    
+                                $DeductibleCur = $Deductible[$i];
+
+                                $stmtCoverage = $conn->prepare("INSERT INTO Coverage (SaleID, WarrantyItemID, EndDate, Cost, Deductible) VALUES((SELECT MAX(SaleID) AS SaleID FROM Sale), ?, ?, ?, ?)");
+                                $stmtCoverage->bind_param("isdd", $warrantyItemCur, $EndDateCur, $CostCur, $DeductibleCur);
+                                $stmtCoverage->execute();
+                            }
+                        }
+                        
+                        if($stmtCustomer->affected_rows === -1 || $stmtSale->affected_rows === -1 && isset($stmtCoverage) && $stmtCoverage->affected_rows === -1) {
                             echo '<div class="large-12 cell "><div data-closable class="callout alert-callout-border alert">
                             <strong>Boo!</strong> - It broke!
                             <button class="close-button" aria-label="Dismiss alert" type="button" data-close>
@@ -132,8 +135,11 @@
                             </button>
                         </div></div>';
                             }
-
-                    $stmt->close();    
+                        
+                        $stmtCustomer->close();
+                        $stmtSale->close();
+                        if(isset($stmtCoverage))
+                            $stmtCoverage->close();    
                     }
 					
                 ?>
@@ -331,6 +337,10 @@
                     <!--WARRANTY-->
                     
                     <div class="warrantyTemplate grid-x grid-padding-x align-middle"> 
+                        <div class="large-12 cell">
+                            <hr>
+                        </div>
+                        
                         <div class="large-1 cell">
                             <label for="WarrantyItem" class="text-right middle">Warranty type</label>
                         </div>
@@ -339,7 +349,7 @@
                                 $sql = "SELECT WarrantyItemID, Type FROM WarrantyItem ORDER BY Type";
                                 $result = mysqli_query($conn, $sql);
 
-                                echo "<select name='WarrantyItem'>";
+                                echo "<select name='WarrantyItem[]'>";
                                 while ($row = $result->fetch_assoc()) {
                                     $WarrantyItemID = $row['WarrantyItemID'];
                                     $Type = $row['Type'];
@@ -348,41 +358,31 @@
                                 echo "</select>";
                             ?>			
                         </div>
-                        <div class="large-1 cell">
-                            <label for="year" class="text-right middle">Cost</label>
-                        </div>
-                        <div class="large-5 cell">
-                            <div class="input-group">
-                                <span class="input-group-label">$</span>
-                                <input class="input-group-field" 
-                                       type="number" 
-                                       oninput='javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);'
-                                       maxlength='9'
-                                       onchange="changeTotal()"
-                                       name="WarrantyCost" 
-                                       id="WarrantyCost" 
-                                       placeholder="----.--">
-                            </div>
-                        </div>
-
-                        <div class="large-1 cell">
-                            <label for="make" class="text-right middle">Start date</label>
-                        </div>
-                        <div class="large-5 cell">
-                            <input type="date" 
-                                   min="1900-01-01"
-                                   max="<?php echo date("Y"); ?>-<?php echo date("m"); ?>-<?php echo date("d"); ?>"
-                                   name="StartDate">
-                        </div>
-
+                        
                         <div class="large-1 cell">
                             <label for="model" class="text-right middle">End date</label>
                         </div>
                         <div class="large-5 cell">
                             <input type="date"
                                    min="1900-01-01"
-                                   max="<?php echo date("Y"); ?>-<?php echo date("m"); ?>-<?php echo date("d"); ?>"
-                                   name="EndDate">
+                                   name="EndDate[]">
+                        </div>
+                        
+                        <div class="large-1 cell">
+                            <label for="year" class="text-right middle">Cost</label>
+                        </div>
+                        <div class="large-5 cell">
+                            <div class="input-group">
+                                <span class="input-group-label">$</span>
+                                <input class="input-group-field WarrantyCost" 
+                                       type="number" 
+                                       oninput='javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);'
+                                       maxlength='9'
+                                       onchange="changeTotal()"
+                                       name="WarrantyCost[]"
+                                       id="WarrantyCost" 
+                                       placeholder="----.--">
+                            </div>
                         </div>
 
                         <div class="large-1 cell">
@@ -394,7 +394,7 @@
                                 <span class="input-group-label">$</span>
                                 <input class="input-group-field"
                                        type="number"
-                                       name="Deductible"
+                                       name="Deductible[]"
                                        oninput='javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);'
                                        maxlength='9'
                                        placeholder="----.--">
@@ -460,12 +460,13 @@
                                        oninput='javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);'
                                        maxlength='9'
                                        placeholder="----.--"
-                                       required>
+                                       id="Finance"
+                                       readonly>
                             </div>
                         </div>
 
                         <div class="large-7 cell">
-                            <label for="TotalDue" class="text-right middle">Total Due:</label>
+                            <label for="TotalDue" class="text-right middle">Total cost</label>
                         </div>
                         <div class="large-5 cell">
                             <div class="input-group">
@@ -509,10 +510,7 @@
                 $('#customerTable').DataTable();
             });
                
-            var WarrantyCost = document.getElementById('WarrantyCost'),
-                Commission = document.getElementById('Commission'),
-                DownPayment = document.getElementById('DownPayment'),
-                radios = document.getElementsByName('VehicleID');
+            var radios = document.getElementsByName('VehicleID');
 
             function addParams()
             {
@@ -543,6 +541,11 @@
             
             function changeTotal()
             {
+                var WarrantyCost = document.getElementsByClassName('WarrantyCost'),
+                Commission = document.getElementById('Commission'),
+                DownPayment = document.getElementById('DownPayment'),
+                Finance = document.getElementById('Finance');
+                
                 TotalCost = 0;
                 var VehiclePrice;
                 for( i = 0; i < radios.length; i++ ) {
@@ -553,13 +556,22 @@
                 
                 if(Commission.value !== "")
                     TotalCost+=parseFloat(Commission.value);
-                if(WarrantyCost.value !== "")
-                    TotalCost+=parseFloat(WarrantyCost.value);
+                
+                for(var i = 0; i < WarrantyCost.length; i++)
+                {
+                    if(WarrantyCost[i].value !== "")
+                        TotalCost+=parseFloat(WarrantyCost[i].value);
+                }
+                
                 if(VehiclePrice !== undefined)
                     TotalCost+=parseFloat(VehiclePrice[1]);
-                if(DownPayment.value !== "")
-                    TotalCost-=parseFloat(DownPayment.value);
+                
                 document.getElementById('TotalDue').value = parseFloat(TotalCost);
+                
+                if(TotalCost != 0 && DownPayment.value !== "")
+                    Finance.value = TotalCost-parseFloat(DownPayment.value);
+                else
+                    Finance.value = "";
             }		
 		</script>
     

@@ -372,7 +372,7 @@
                         
                     <div class="grid-x grid-padding-x">
                         <div class="large-12 cell">
-                            <input type="submit" class="button float-right" id="purchaseVehicle" name="purchaseVehicle" value="Purchase vehicle">
+                            <input type="submit" class="button float-right" id="purchaseVehicle" name="purchaseVehicle" value="Complete purchase">
                         </div>
                     </div>
                     
