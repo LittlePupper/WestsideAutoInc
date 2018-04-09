@@ -92,7 +92,7 @@ CREATE TABLE Vehicle (
 	`Condition`		VARCHAR(20) NOT NULL,
 	BookPrice		FLOAT(8,2) NOT NULL,
 	PricePaid		FLOAT(8,2) NOT NULL,
-    ListingPrice    FLOAT(8,2) NOT NULL,
+    ListingPrice    FLOAT(8,2),
     IsSold			BOOLEAN NOT NULL,
 	PRIMARY KEY (VehicleID),
 	FOREIGN KEY (PurchaseID) REFERENCES Purchase(PurchaseID)

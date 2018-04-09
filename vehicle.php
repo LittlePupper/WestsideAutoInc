@@ -129,12 +129,11 @@
                     if(isset($_POST['updateRepair'])){
                         $vehicleID = $_POST['q'];
                         $repairID = $_POST['r'];
-                        $estCost = $_POST['estCost'];
                         $actualCost = $_POST['actualCost'];
                         $problem = $_POST['problem'];
 
-                        $stmt = $conn->prepare("UPDATE Repair SET EstCost=?, ActualCost=?, Problem=? WHERE RepairID=? AND VehicleID=?");
-                        $stmt->bind_param("ddsii", $estCost, $actualCost, $problem, $repairID, $vehicleID);
+                        $stmt = $conn->prepare("UPDATE Repair SET ActualCost=?, Problem=? WHERE RepairID=? AND VehicleID=?");
+                        $stmt->bind_param("dsii", $actualCost, $problem, $repairID, $vehicleID);
                         $stmt->execute();
                         
                         if($stmt->affected_rows === -1) {
@@ -171,13 +170,12 @@
                                     <th>Mileage</th>
                                     <th>Style</th>
                                     <th>Interior Color</th>
-                                    <th>Listing Price</th>
                                     <th></th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <?php 
-                                    $sql = "SELECT VehicleID, Make, Model, Year, Color, Mileage, Style, InteriorColor, ListingPrice FROM Vehicle";
+                                    $sql = "SELECT VehicleID, Make, Model, Year, Color, Mileage, Style, InteriorColor FROM Vehicle";
                                     $result = mysqli_query($conn, $sql);
                                     while ($row = $result->fetch_assoc()) {
                                         $VehicleID = $row['VehicleID'];
@@ -188,7 +186,6 @@
                                         $Mileage = $row['Mileage'];
                                         $Style = $row['Style'];
                                         $InteriorColor = $row['InteriorColor'];
-                                        $ListingPrice = $row['ListingPrice'];
                                         echo '<tr>';
                                         echo '<td>'.$Year.'</td>';
                                         echo '<td>'.$Make.'</td>';
@@ -197,7 +194,6 @@
                                         echo '<td>'.$Mileage.'</td>';
                                         echo '<td>'.$Style.'</td>';
                                         echo '<td>'.$InteriorColor.'</td>';
-                                        echo '<td>$'.$ListingPrice.'</td>';	
                                         echo '<td><button type="button" id="'.$VehicleID.'" class="float-right table-button" onclick="showVehicle(this.id)">Edit</button></td>';
                                         echo '</tr>';
 

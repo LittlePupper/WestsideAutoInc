@@ -275,7 +275,7 @@
                                    maxlength='9'
                                    placeholder='400.00' 
                                    value='" . $repairrow['EstCost'] . "'
-                                   required>
+                                   disabled>
                         </div>
                     </div>
 

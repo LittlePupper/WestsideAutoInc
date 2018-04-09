@@ -89,11 +89,10 @@
                             $conditionCur = $_POST['condition'][$i];
                             $bookPriceCur = $_POST['bookPrice'][$i];
                             $pricePaidCur = $_POST['pricePaid'][$i];
-                            $listingPriceCur = $_POST['listingPrice'][$i];
                             
                             /*Insert into Vehicle*/
-                            $stmtVehicle = $conn->prepare("INSERT INTO Vehicle (PurchaseID, Make, Model, Year, Color, Mileage, `Condition`, BookPrice, PricePaid, Style, InteriorColor, ListingPrice, IsSold) VALUES ((SELECT MAX(PurchaseID) AS PurchaseID FROM Purchase), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)");
-                            $stmtVehicle->bind_param("ssisisddssd", $makeCur, $modelCur, $yearCur, $colorCur, $mileageCur, $conditionCur, $bookPriceCur, $pricePaidCur, $styleCur, $interiorColorCur, $listingPriceCur);
+                            $stmtVehicle = $conn->prepare("INSERT INTO Vehicle (PurchaseID, Make, Model, Year, Color, Mileage, `Condition`, BookPrice, PricePaid, Style, InteriorColor, IsSold) VALUES ((SELECT MAX(PurchaseID) AS PurchaseID FROM Purchase), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)");
+                            $stmtVehicle->bind_param("ssisisddss", $makeCur, $modelCur, $yearCur, $colorCur, $mileageCur, $conditionCur, $bookPriceCur, $pricePaidCur, $styleCur, $interiorColorCur);
                             $stmtVehicle->execute();
                             
                             $numRepairs = $_POST['numRepairs'][$i];
@@ -101,12 +100,11 @@
                             {
                                 /*Repair*/
                                 $estCostCur = $_POST['estCost'][$j];
-                                $actualCostCur = $_POST['actualCost'][$j];
                                 $problemCur = $_POST['problem'][$j];   
                                 
                                 /*Insert into Repair*/
-                                $stmtRepair = $conn->prepare("INSERT INTO Repair (VehicleID, EstCost, ActualCost, Problem) VALUES ((SELECT MAX(VehicleID) AS VehicleID FROM Vehicle), ?, ?, ?)");
-                                $stmtRepair->bind_param("dds", $estCostCur, $actualCostCur, $problemCur);
+                                $stmtRepair = $conn->prepare("INSERT INTO Repair (VehicleID, EstCost, Problem) VALUES ((SELECT MAX(VehicleID) AS VehicleID FROM Vehicle), ?, ?)");
+                                $stmtRepair->bind_param("ds", $estCostCur, $problemCur);
                                 $stmtRepair->execute();
                             }
                             $sumRepairs += $numRepairs;
@@ -250,7 +248,8 @@
                                            type="number" 
                                            name="mileage[]" 
                                            placeholder="15000" 
-                                           maxlength="7"
+                                           oninput='javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);'
+                                           maxlength='7'
                                            required>
                                     <span class="input-group-label">km</span>
                                 </div>
@@ -300,8 +299,7 @@
                                 <input type="text" 
                                        name="condition[]" 
                                        placeholder="Mint" 
-                                       oninput='javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);'
-                                       maxlength='9'
+                                       maxlength='20'
                                        required>
                             </div>
                             <div class="large-1 cell">
@@ -334,21 +332,6 @@
                                            required>
                                 </div>
                             </div>
-                            <div class="large-1 cell">
-                                <label for="listingPrice" class="text-right middle">Listing price</label>
-                            </div>
-                            <div class="large-5 cell">
-                                <div class="input-group">
-                                    <span class="input-group-label">$</span>
-                                    <input 
-                                           class="input-group-field" 
-                                           name="listingPrice[]" 
-                                           type="number" 
-                                           oninput='javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);'
-                                           maxlength='9'
-                                           placeholder="1950.00" required>
-                                </div>
-                            </div>
                         </div>  
 
                         <!-- REPAIR TEMPLATE -->
@@ -360,20 +343,10 @@
                             <div class="large-1 cell">
                                 <label for="estCost" class="text-right middle">Est. cost</label>
                             </div>
-                            <div class="large-5 cell">
+                            <div class="large-11 cell">
                                 <div class="input-group">
                                     <span class="input-group-label">$</span>
-                                    <input class="input-group-field" name="estCost[]" type="number" placeholder="400.00" required>
-                                </div>
-                            </div>
-
-                            <div class="large-1 cell">
-                                <label for="actualCost" class="text-right middle">Actual cost</label>
-                            </div>
-                            <div class="large-5 cell">
-                                <div class="input-group">
-                                    <span class="input-group-label">$</span>
-                                    <input class="input-group-field" name="actualCost[]" type="number" placeholder="300.00" required>
+                                    <input class="input-group-field" name="estCost[]" type="number" placeholder="400.00">
                                 </div>
                             </div>
 
@@ -381,7 +354,7 @@
                                 <label for="problem" class="text-right middle">Problem</label>
                             </div>                        
                             <div class="large-11 cell">
-                                <textarea name="problem[]" placeholder="The problem is..." required></textarea>
+                                <textarea name="problem[]" placeholder="The problem is..."></textarea>
                             </div>
                         </div>     
 
