@@ -67,8 +67,9 @@
                 </div>
                 <div class='large-5 cell'>
                     <input type='date' 
-                           max='2999-12-31' 
                            name='birthday' 
+                           min='1900-01-01'
+                           max='" . date("Y") . "-" . date("m") . "-" . date("d") . "'
                            value='" . $row['Birthday'] . "'
                            required>
                 </div>
